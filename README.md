@@ -2,7 +2,7 @@
 
 ## **GPT Keras implementation from scratch.**
 
-This project is a TensorFlow implementation, based of Andrej Karpathy's video [Let's build GPT: from scratch, in code, spelled out](https://www.youtube.com/watch?v=kCc8FmEb1nY) project, which can be found at the original link: [ng-video-lecture](https://github.com/karpathy/ng-video-lecture/blob/master).
+This project is a TensorFlow implementation, based of Andrej Karpathy's video [Let's build GPT: from scratch, in code, spelled out](https://www.youtube.com/watch?v=kCc8FmEb1nY) project, which can be found at the original link: [ng-video-lecture](https://github.com/karpathy/ng-video-lecture).
 
 ## About the Project
 
@@ -10,7 +10,7 @@ Andrej Karpathy's invaluable resource, guiding the process of coding GPT from th
 
 ## Files
 
-- [embedding_tf.py](examples/embedding_tf.py): simple implementation of Keras Embedding layer, that explained functionality how token-indices works with logits on operational level. Ready to use in any code.
+- [embedding_tf.py](examples/embedding_tf.py): simple implementation of Keras Embedding layer, that explained functionality how token-indices works with logits on operational level. Example is ready to use in any code.
 
 - **bigram.py**: A Keras code that includes code for training a basic Bigram model. This model is a simple n-gram language model that can generate text by prediction the next token.
 
@@ -25,3 +25,8 @@ Andrej Karpathy's invaluable resource, guiding the process of coding GPT from th
 ## Explanation of Code
 
 The code in this repository is thoroughly explained in the accompanying code, that provides detailed insights into the implementation of the Generative Pre-trained Transformer (GPT) model from scratch using TensorFlow and Keras.
+
+
+## References:
+
+* https://github.com/j-planet/andrej_chatgpt
