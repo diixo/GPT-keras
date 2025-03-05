@@ -1,8 +1,8 @@
 # GPT-keras
 
-GPT Keras implementation from scratch.
+## **GPT Keras implementation from scratch.**
 
-This project is a TensorFlow implementation, based of Andrej Karpathy's [ng-video-lecture](https://www.youtube.com/watch?v=kCc8FmEb1nY) project, which can be found at the original link: [ng-video-lecture](https://github.com/karpathy/ng-video-lecture/blob/master).
+This project is a TensorFlow implementation, based of Andrej Karpathy's video [Let's build GPT: from scratch, in code, spelled out](https://www.youtube.com/watch?v=kCc8FmEb1nY) project, which can be found at the original link: [ng-video-lecture](https://github.com/karpathy/ng-video-lecture/blob/master).
 
 ## About the Project
 
