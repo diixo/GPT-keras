@@ -14,6 +14,8 @@ Andrej Karpathy's invaluable resource, guiding the process of coding GPT from th
 
 - **bigram.py**: A Keras code that includes code for training a basic Bigram model. This model is a simple n-gram language model that can generate text by prediction the next token.
 
+- **maths.py**: some mathematical tricks and toy math-operations for self-attention
+
 - **gpt.py**: A Keras code that includes the code for building a GPT model from scratch. It covers the implementation of a basic transformer architecture for text generation. You can follow the notebook to understand the inner workings of GPT.
 
 - **gpt_model_weights.h5**: Pre-trained weights for the GPT model after 5,000 iterations. You can use these weights to generate text using the implemented GPT model without going through the training process.
@@ -30,3 +32,6 @@ The code in this repository is thoroughly explained in the accompanying code, th
 ## References:
 
 * https://github.com/j-planet/andrej_chatgpt
+
+* https://github.com/cloudxlab/GPT-from-scratch
+
