@@ -9,6 +9,7 @@ max_iters = 5000
 eval_interval = 100
 learning_rate = 1e-2
 eval_iters = 200
+n_embd = 32
 
 tf.random.set_seed(1337)
 
@@ -60,14 +61,19 @@ class BigramLanguageModel(keras.Model):
     def __init__(self, vocab_size):
         super(BigramLanguageModel, self).__init__()
         # each token directly reads off the logits for the next token from a lookup table
-        self.token_embedding_table = layers.Embedding(vocab_size, vocab_size)
+        self.token_embedding_table = layers.Embedding(vocab_size, n_embd)
+        self.position_embedding_table = layers.Embedding(block_size, n_embd)
+        self.lm_head = layers.Dense(units=vocab_size, input_shape=(n_embd,))
 
 
     def call(self, idx, targets=None):
+        B, T = idx.shape
 
         # idx and targets are both (B=batch, T=time) tensor of integers
-        logits = self.token_embedding_table(idx) # (B=batch, T=time, C=channel=vocab_size)
-        # logits interprate the scores for the next character in the sequence
+        tok_emb = self.token_embedding_table(idx)               # (B, T, C=n_embd)
+        pos_emb = self.position_embedding_table(tf.range(T))    # (T, C=n_embd)
+        x = tok_emb + pos_emb                 # (B, T, C)
+        logits = self.lm_head(x)              # (B, T, vocab_sz)
 
         if targets is None:
             loss = None
