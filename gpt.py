@@ -7,7 +7,7 @@ batch_size = 32
 block_size = 8
 max_iters = 5000
 eval_interval = 100
-learning_rate = 1e-2
+learning_rate = 1e-3
 eval_iters = 200
 n_embd = 32
 
@@ -56,6 +56,39 @@ def estimate_loss():
     return out
 
 
+class Head(tf.keras.layers.Layer):
+    """ one head of self-attention """
+
+    def __init__(self, head_size):
+        super(Head, self).__init__()
+        self.key = tf.keras.layers.Dense(head_size, use_bias=False)
+        self.query = tf.keras.layers.Dense(head_size, use_bias=False)
+        self.value = tf.keras.layers.Dense(head_size, use_bias=False)
+
+        tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
+        self.tril = tf.constant(tril)
+
+
+    def call(self, x):
+        # input of size (batch, time-step, channels)
+        # output of size (batch, time-step, head_size)
+        B, T, C = x.shape
+        k = self.key(x)                         # (B, T, head_size)
+        q = self.query(x)                       # (B, T, head_size)
+        k_T = tf.transpose(k, perm=[0, 2, 1])   # (B, T, head_size) --> (B, head_size, T)
+
+        # compute attention scores ("affinities")
+        scale = tf.math.rsqrt(tf.cast(C, tf.float32))
+        wei = tf.matmul(q, k_T) * scale         # (B, T, head_size) @ (B, head_size, T) --> (B, T, T)
+        wei = tf.where(self.tril[:T, :T] == 0, float('-inf'), wei)  # (B, T, T)
+        wei = tf.nn.softmax(wei, axis=-1)       # (B, T, T)
+
+        # perform the weighted aggregation of the values
+        v = self.value(x)                       # (B, T, head_size)
+        out = tf.matmul(wei, v)                 # (B, T, T) @ (B, T, head_size) --> (B, T, head_size)
+        return out
+
+
 class BigramLanguageModel(keras.Model):
 
     def __init__(self, vocab_size):
@@ -63,6 +96,7 @@ class BigramLanguageModel(keras.Model):
         # each token directly reads off the logits for the next token from a lookup table
         self.token_embedding_table = layers.Embedding(vocab_size, n_embd)
         self.position_embedding_table = layers.Embedding(block_size, n_embd)
+        self.sa_head = Head(n_embd)
         self.lm_head = layers.Dense(units=vocab_size, input_shape=(n_embd,))
 
 
@@ -72,8 +106,9 @@ class BigramLanguageModel(keras.Model):
         # idx and targets are both (B=batch, T=time) tensor of integers
         tok_emb = self.token_embedding_table(idx)               # (B, T, C=n_embd)
         pos_emb = self.position_embedding_table(tf.range(T))    # (T, C=n_embd)
-        x = tok_emb + pos_emb                 # (B, T, C)
-        logits = self.lm_head(x)              # (B, T, vocab_sz)
+        x = tok_emb + pos_emb               # (B, T, C)
+        x = self.sa_head(x)                 # apply one head of self-attention (B, T, C)
+        logits = self.lm_head(x)            # (B, T, vocab_sz)
 
         if targets is None:
             loss = None
@@ -87,10 +122,12 @@ class BigramLanguageModel(keras.Model):
 
     def generate(self, idx, max_new_tokens):
         for _ in tf.range(max_new_tokens):
+            # crop idx to the last block_size token
+            idx_cond = idx[:, -block_size:]
             # get the prediction by logits, loss ignored. 
-            logits, loss = self(idx)    # forward to get logits = (B, T, C)
+            logits, loss = self(idx_cond)   # forward to get logits = (B, T, C)
             # focus only on last time step
-            logits = logits[:, -1, :]   # becomes (B, C)
+            logits = logits[:, -1, :]       # becomes (B, C)
             # apply softmax to get max probability
             probs = tf.nn.softmax(logits, axis=-1)  # (B, C)
             # get next char-index
