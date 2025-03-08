@@ -18,6 +18,10 @@ Andrej Karpathy's invaluable resource, guiding the process of coding GPT from th
 
 - **gpt0.py**: one head of self-attention implementation
 
+- **gpt1.py**: multi-heading of self-attention implementation
+
+- **gpt2.py**: added simple feed-forward layer
+
 - **gpt.py**: A Keras code that includes the code for building a GPT model from scratch. It covers the implementation of a basic transformer architecture for text generation. You can follow the notebook to understand the inner workings of GPT.
 
 - **gpt_model_weights.h5**: Pre-trained weights for the GPT model after 5,000 iterations. You can use these weights to generate text using the implemented GPT model without going through the training process.
