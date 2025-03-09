@@ -16,11 +16,11 @@ Andrej Karpathy's invaluable resource, guiding the process of coding GPT from th
 
 - **maths.py**: some mathematical tricks and toy math-operations for self-attention
 
-- **gpt0.py**: one head of self-attention implementation
+- **0_gpt.py**: one head of self-attention implementation
 
-- **gpt1.py**: multi-heading of self-attention implementation
+- **1_gpt.py**(**1_gpt_pt.py**): multi-heading of self-attention implementation
 
-- **gpt2.py**: added simple feed-forward layer
+- **2_gpt.py**(**2_gpt_pt.py**): added simple feed-forward layer
 
 - **3_gpt.py**(**3_gpt_pt.py**): feed-forward + transformation block + residual connections
 
@@ -42,4 +42,8 @@ The code in this repository is thoroughly explained in the accompanying code, th
 * https://github.com/j-planet/andrej_chatgpt
 
 * https://github.com/cloudxlab/GPT-from-scratch
+
+* https://arxiv.org/abs/1512.03385 : Deep Residual Learning for Image Recognition
+
+* https://arxiv.org/abs/1606.08415 : Gaussian Error Linear Unit (GELU)
 
