@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 
+
 # Hyperparameters
 batch_size = 32
 block_size = 8
@@ -59,9 +60,9 @@ class Head(tf.keras.layers.Layer):
 
     def __init__(self, head_size):
         super(Head, self).__init__()
-        self.key = tf.keras.layers.Dense(units=head_size, use_bias=False)
-        self.query = tf.keras.layers.Dense(units=head_size, use_bias=False)
-        self.value = tf.keras.layers.Dense(units=head_size, use_bias=False)
+        self.key = layers.Dense(units=head_size, use_bias=False)
+        self.query = layers.Dense(units=head_size, use_bias=False)
+        self.value = layers.Dense(units=head_size, use_bias=False)
 
         tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
         self.tril = tf.constant(tril)
@@ -93,7 +94,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
     def __init__(self, num_heads, head_size):
         super(MultiHeadAttention, self).__init__()
         self.heads = [Head(head_size) for _ in range(num_heads)]
-        self.proj = tf.keras.layers.Dense(units=n_embd)
+        self.proj = layers.Dense(units=n_embd)
 
     def call(self, x):
         out = tf.concat([h(x) for h in self.heads], axis=-1)
@@ -106,9 +107,9 @@ class FeedForward(tf.keras.layers.Layer):
     def __init__(self, n_embd):
         super(FeedForward, self).__init__()
         self.net = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=4*n_embd),
-            tf.keras.layers.ReLU(),
-            tf.keras.layers.Dense(units=n_embd),
+            layers.Dense(units=4*n_embd),
+            layers.ReLU(),
+            layers.Dense(units=n_embd),
         ])
 
     def call(self, x):
@@ -183,6 +184,7 @@ class BigramLanguageModel(keras.Model):
 
 
 def train_model(model: BigramLanguageModel):
+
     optimizer = tf.optimizers.AdamW(
         learning_rate=learning_rate,
         weight_decay=1e-2,
