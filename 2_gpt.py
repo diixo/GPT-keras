@@ -99,13 +99,30 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         return out
 
 
+
+class DenseRB(tf.keras.layers.Dense):
+    """ Random bias initializer by default """
+
+    def __init__(self, in_features, out_features, use_bias=True, **kwargs):
+        super().__init__(
+            units = out_features,
+            use_bias = use_bias,
+            kernel_initializer = tf.keras.initializers.HeUniform(),
+            bias_initializer = tf.keras.initializers.RandomUniform(
+                minval = -tf.math.rsqrt(tf.cast(in_features, tf.float32)),
+                maxval =  tf.math.rsqrt(tf.cast(in_features, tf.float32))
+            ) if use_bias else None,
+            **kwargs
+        )
+
+
 class FeedForward(tf.keras.layers.Layer):
     """ a simple linear layer followed by a non-linearity """
 
     def __init__(self, n_embd):
         super(FeedForward, self).__init__()
         self.net = tf.keras.Sequential([
-            layers.Dense(units=n_embd),
+            DenseRB(n_embd, n_embd),
             layers.ReLU(),
         ])
 
@@ -122,7 +139,7 @@ class BigramLanguageModel(keras.Model):
         self.position_embedding_table = layers.Embedding(block_size, n_embd)
         self.sa_heads = MultiHeadAttention(4, n_embd//4) # 4 heads of 8-dimensional self-attention (32)
         self.ffwd = FeedForward(n_embd)
-        self.lm_head = layers.Dense(units=vocab_size, input_shape=(n_embd,))
+        self.lm_head = DenseRB(n_embd, vocab_size)
 
 
     def call(self, idx, targets=None):
