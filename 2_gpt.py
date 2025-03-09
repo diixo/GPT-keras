@@ -59,9 +59,9 @@ class Head(tf.keras.layers.Layer):
 
     def __init__(self, head_size):
         super(Head, self).__init__()
-        self.key = tf.keras.layers.Dense(units=head_size, use_bias=False)
-        self.query = tf.keras.layers.Dense(units=head_size, use_bias=False)
-        self.value = tf.keras.layers.Dense(units=head_size, use_bias=False)
+        self.key = layers.Dense(units=head_size, use_bias=False)
+        self.query = layers.Dense(units=head_size, use_bias=False)
+        self.value = layers.Dense(units=head_size, use_bias=False)
 
         tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
         self.tril = tf.constant(tril)
@@ -105,8 +105,8 @@ class FeedForward(tf.keras.layers.Layer):
     def __init__(self, n_embd):
         super(FeedForward, self).__init__()
         self.net = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=n_embd),
-            tf.keras.layers.ReLU(),
+            layers.Dense(units=n_embd),
+            layers.ReLU(),
         ])
 
     def call(self, x):
