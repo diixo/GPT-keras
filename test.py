@@ -5,8 +5,8 @@ from tensorflow import keras
 from keras import layers, models
 import tensorflow as tf
 
-# ------------------- PyTorch Model -------------------
 
+# ------------------- PyTorch Model -------------------
 class SimpleModelTorch(nn.Module):
     def __init__(self, input_dim, output_dim):
         super(SimpleModelTorch, self).__init__()
@@ -25,8 +25,8 @@ model_torch = SimpleModelTorch(input_dim, output_dim)
 
 optimizer_torch = optim.AdamW(model_torch.parameters(), lr=1e-3, weight_decay=1e-2, eps=1e-8)
 
-# ------------------- Keras Model -------------------
 
+# ------------------- Keras Model -------------------
 class SimpleModelKeras(tf.keras.Model):
     def __init__(self, input_dim, output_dim):
         super(SimpleModelKeras, self).__init__()
@@ -40,14 +40,15 @@ class SimpleModelKeras(tf.keras.Model):
 
 model_keras = SimpleModelKeras(input_dim, output_dim)
 
-model_keras.build((None, input_dim))  # Ожидаем, что входные данные будут иметь размерность (None, input_dim)
+model_keras.build((None, input_dim))  # (None, input_dim)
 
 
 optimizer_keras = tf.keras.optimizers.Adam(learning_rate=1e-3, weight_decay=1e-2, epsilon=1e-8)
 
-# ------------------- Инициализация одинаковых весов для обоих моделей -------------------
 
-# Извлекаем веса из PyTorch
+# ------------------- Initialization equal weights for both models -------------------
+
+# Extract weights from PyTorch
 with torch.no_grad():
     torch_weights = model_torch.fc.weight.data
     torch_bias = model_torch.fc.bias.data
@@ -64,25 +65,25 @@ model_keras.fc.set_weights([keras_weights.T, keras_bias])
 data_torch = torch.randn(32, input_dim)
 target_torch = torch.randn(32, output_dim)
 
-# Преобразуем данные PyTorch в формат numpy, чтобы использовать в Keras
+# Transform PyTorch into numpy, for using in Keras
 data_keras = tf.convert_to_tensor(data_torch.numpy(), dtype=tf.float32)
 target_keras = tf.convert_to_tensor(target_torch.numpy(), dtype=tf.float32)
 
 
-# Шаг оптимизации в PyTorch
+# Step optimization in PyTorch
 optimizer_torch.zero_grad()
 output_torch = model_torch(data_torch)
 loss_torch = torch.nn.functional.mse_loss(output_torch, target_torch)
 loss_torch.backward()
 optimizer_torch.step()
 
-# Шаг оптимизации в Keras
+# Step optimization in Keras
 with tf.GradientTape() as tape:
     output_keras = model_keras(data_keras)
     loss_keras = tf.reduce_mean(tf.square(output_keras - target_keras))
 gradients_keras = tape.gradient(loss_keras, model_keras.trainable_variables)
 optimizer_keras.apply_gradients(zip(gradients_keras, model_keras.trainable_variables))
 
-# Печать значения loss для обеих моделей
+
 print(f"PyTorch Loss: {loss_torch.item()}")
 print(f"Keras Loss: {loss_keras.numpy()}")
