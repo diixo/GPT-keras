@@ -105,7 +105,7 @@ class FeedForward(tf.keras.layers.Layer):
     def __init__(self, n_embd):
         super(FeedForward, self).__init__()
         self.net = tf.keras.Sequential([
-            tf.keras.layers.Dense(units=4*n_embd),
+            tf.keras.layers.Dense(units=n_embd),
             tf.keras.layers.ReLU(),
         ])
 
