@@ -158,7 +158,11 @@ class BigramLanguageModel(keras.Model):
 
 
 def train_model(model: BigramLanguageModel):
-    optimizer = tf.optimizers.Adam(learning_rate)
+
+    optimizer = tf.optimizers.AdamW(
+        learning_rate=learning_rate,
+        weight_decay=1e-2,
+        epsilon=1e-8)
 
     for iter in tf.range(max_iters):
 
