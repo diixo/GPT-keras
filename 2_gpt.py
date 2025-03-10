@@ -192,13 +192,13 @@ def train_model(model: BigramLanguageModel):
             if not model.trainable_variables:
                 print(f"❌ Warning: trainable_variables is EMPTY on:{iter.numpy()}: train_loss {losses['train']:.4f}, val_loss {losses['val']:.4f}")
             else:
-                total_params = sum(tf.size(param).numpy() for param in model.trainable_variables)
-                print(f"✅ ...on {iter.numpy()}: train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f}). Model.sz={total_params} ")
+                print(f"✅ ...on {iter.numpy()}(th)... train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
 
     
+    total_params = sum(tf.size(param).numpy() for param in model.trainable_variables)
     # final estimation:
     losses = estimate_loss(model)
-    print(f"Final step {iter.numpy()}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+    print(f"Final step {iter.numpy()}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}. Model.sz={total_params}")
 
 
 model = BigramLanguageModel(vocab_size)

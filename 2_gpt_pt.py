@@ -181,13 +181,13 @@ for iter in range(max_iters):
     # every once in a while evaluate the loss on train and val sets
     if iter % eval_interval == 0:
         losses = estimate_loss(model)
-        total_params = sum(p.numel() for p in model.parameters())
-        print(f"✅ ...on {iter}(th) train_loss: {losses['train']:.4f}, val_loss: {losses['val']:.4f}, params: {total_params}")
+        print(f"✅ ...on {iter}(th) train_loss: {losses['train']:.4f}, val_loss: {losses['val']:.4f}")
 
 
 # Final (4500=2.2190, 2.2478)
 losses = estimate_loss(model)
-print(f"Final step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+total_params = sum(p.numel() for p in model.parameters())
+print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}, params: {total_params}")
 
 
 # generate from the model
