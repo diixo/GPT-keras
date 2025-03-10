@@ -104,13 +104,14 @@ class DenseRB(tf.keras.layers.Dense):
     """ Random bias initializer by default """
 
     def __init__(self, in_features, out_features, use_bias=True, **kwargs):
+        limit = tf.math.rsqrt(tf.cast(in_features, tf.float32))
         super().__init__(
             units = out_features,
             use_bias = use_bias,
             kernel_initializer = tf.keras.initializers.HeUniform(),
             bias_initializer = tf.keras.initializers.RandomUniform(
-                minval = -tf.math.rsqrt(tf.cast(in_features, tf.float32)),
-                maxval =  tf.math.rsqrt(tf.cast(in_features, tf.float32))
+                minval = -limit,
+                maxval =  limit
             ) if use_bias else None,
             **kwargs
         )
