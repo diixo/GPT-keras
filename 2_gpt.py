@@ -40,7 +40,7 @@ def get_batch(split):
     return x, y
 
 
-def estimate_loss():
+def estimate_loss(model):
     out = {}
     model.trainable = False
     for split in ['train', 'val']:
@@ -99,31 +99,13 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         return out
 
 
-
-class DenseRB(tf.keras.layers.Dense):
-    """ Random bias initializer by default """
-
-    def __init__(self, in_features, out_features, use_bias=True, **kwargs):
-        limit = tf.math.rsqrt(tf.cast(in_features, tf.float32))
-        super().__init__(
-            units = out_features,
-            use_bias = use_bias,
-            kernel_initializer = tf.keras.initializers.HeUniform(),
-            bias_initializer = tf.keras.initializers.RandomUniform(
-                minval = -limit,
-                maxval =  limit
-            ) if use_bias else None,
-            **kwargs
-        )
-
-
 class FeedForward(tf.keras.layers.Layer):
     """ a simple linear layer followed by a non-linearity """
 
     def __init__(self, n_embd):
         super(FeedForward, self).__init__()
         self.net = tf.keras.Sequential([
-            DenseRB(n_embd, n_embd),
+            layers.Dense(units=n_embd),
             layers.ReLU(),
         ])
 
@@ -140,7 +122,7 @@ class BigramLanguageModel(keras.Model):
         self.position_embedding_table = layers.Embedding(block_size, n_embd)
         self.sa_heads = MultiHeadAttention(4, n_embd//4) # 4 heads of 8-dimensional self-attention (32)
         self.ffwd = FeedForward(n_embd)
-        self.lm_head = DenseRB(n_embd, vocab_size)
+        self.lm_head = layers.Dense(units=vocab_size)
 
 
     def call(self, idx, targets=None):
@@ -182,17 +164,13 @@ class BigramLanguageModel(keras.Model):
 
 
 def train_model(model: BigramLanguageModel):
-
     optimizer = tf.optimizers.AdamW(
         learning_rate=learning_rate,
         weight_decay=1e-2,
-        epsilon=1e-8)
+        epsilon=1e-8
+    )
 
     for iter in tf.range(max_iters):
-
-        if iter % eval_interval == 0:
-            losses = estimate_loss()
-            print(f"step {iter.numpy()}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
 
         xb, yb = get_batch('train')
 
@@ -202,10 +180,24 @@ def train_model(model: BigramLanguageModel):
 
         # backward pass
         gradients = tape.gradient(loss, model.trainable_variables)
+
+        if any(g is None for g in gradients):
+            print(f"❌ Warning: Some gradients are None at step {iter.numpy()}")
+
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+
+        if iter % eval_interval == 0:
+            losses = estimate_loss(model)
+
+            if not model.trainable_variables:
+                print(f"❌ Warning: trainable_variables is EMPTY on:{iter.numpy()}: train_loss {losses['train']:.4f}, val_loss {losses['val']:.4f}")
+            else:
+                total_params = sum(tf.size(param).numpy() for param in model.trainable_variables)
+                print(f"✅ ...on {iter.numpy()}: train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f}). Model.sz={total_params} ")
+
     
     # final estimation:
-    losses = estimate_loss()
+    losses = estimate_loss(model)
     print(f"Final step {iter.numpy()}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
 
 
