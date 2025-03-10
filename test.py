@@ -43,7 +43,7 @@ model_keras = SimpleModelKeras(input_dim, output_dim)
 model_keras.build((None, input_dim))  # (None, input_dim)
 
 
-optimizer_keras = tf.keras.optimizers.Adam(learning_rate=1e-3, weight_decay=1e-2, epsilon=1e-8)
+optimizer_keras = tf.keras.optimizers.AdamW(learning_rate=1e-3, weight_decay=1e-2, epsilon=1e-8)
 
 
 # ------------------- Initialization equal weights for both models -------------------
