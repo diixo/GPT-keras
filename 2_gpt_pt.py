@@ -8,10 +8,10 @@ block_size = 8 # what is the maximum context length for predictions?
 max_iters = 5000
 eval_interval = 100
 learning_rate = 1e-3
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 eval_iters = 200
 n_embd = 32
-# ------------
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 
 torch.manual_seed(1337)
 
@@ -181,13 +181,13 @@ for iter in range(max_iters):
     # every once in a while evaluate the loss on train and val sets
     if iter % eval_interval == 0:
         losses = estimate_loss(model)
-        print(f"✅ ...on {iter}(th) train_loss: {losses['train']:.4f}, val_loss: {losses['val']:.4f}")
+        print(f"✅ ...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
 
 
 # Final (4500=2.2190, 2.2478)
 losses = estimate_loss(model)
 total_params = sum(p.numel() for p in model.parameters())
-print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}, params: {total_params}")
+print(f"🚩 Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}, params: {total_params}")
 
 
 # generate from the model
