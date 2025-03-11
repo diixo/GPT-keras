@@ -192,10 +192,6 @@ def train_model(model: BigramLanguageModel):
 
     for iter in tf.range(max_iters):
 
-        if iter % eval_interval == 0:
-            losses = estimate_loss()
-            print(f"step {iter.numpy()}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
-
         xb, yb = get_batch('train')
 
         with tf.GradientTape() as tape:
