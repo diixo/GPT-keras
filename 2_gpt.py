@@ -3,8 +3,8 @@ from tensorflow import keras
 from keras import layers
 
 # Hyperparameters
-batch_size = 32
-block_size = 8
+batch_size = 32 # how many independent sequences will we process in parallel?
+block_size = 8 # what is the maximum context length for predictions?
 max_iters = 5000
 eval_interval = 100
 learning_rate = 1e-3
@@ -31,7 +31,7 @@ n = int(0.9 * len(data))
 train_data = data[:n]
 val_data = data[n:]
 
-
+# data loading
 def get_batch(split):
     data_split = train_data if split == 'train' else val_data
     ix = tf.random.uniform(shape=(batch_size,), maxval=len(data_split) - block_size, dtype=tf.int32)
@@ -164,6 +164,7 @@ class BigramLanguageModel(keras.Model):
 
 
     def generate(self, idx, max_new_tokens):
+        # idx is (B, T) array of indices in the current context
         for _ in tf.range(max_new_tokens):
             # crop idx to the last block_size token
             idx_cond = idx[:, -block_size:]
