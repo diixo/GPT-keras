@@ -112,7 +112,7 @@ class FeedForward(nn.Module):
         return self.net(x)
 
 
-# super simple bigram model (4500=2.2286, 2.2412)
+# super simple bigram model
 class BigramLanguageModel(nn.Module):
 
     def __init__(self, vocab_size):
@@ -127,6 +127,7 @@ class BigramLanguageModel(nn.Module):
     def forward(self, idx, targets=None):
         B, T = idx.shape
 
+        # idx and targets are both (B=batch, T=time) tensor of integers
         tok_emb = self.token_embedding_table(idx)
         pos_emb = self.position_embedding_table(torch.arange(T, device=device))
         x = tok_emb + pos_emb
@@ -147,6 +148,7 @@ class BigramLanguageModel(nn.Module):
     def generate(self, idx, max_new_tokens):
         # idx is (B, T) array of indices in the current context
         for _ in range(max_new_tokens):
+            # crop idx to the last block_size token
             idx_cond = idx[:, -block_size:]
             # get the predictions
             logits, loss = self(idx_cond)
@@ -181,15 +183,14 @@ for iter in range(max_iters):
     # every once in a while evaluate the loss on train and val sets
     if iter % eval_interval == 0:
         losses = estimate_loss(model)
-        print(f"✅ ...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
+        print(f"...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
 
 
-# Final (4500=2.2190, 2.2478)
-losses = estimate_loss(model)
 total_params = sum(p.numel() for p in model.parameters())
-print(f"🚩 Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}, params: {total_params}")
+losses = estimate_loss(model)
+print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}, params: {total_params}")
 
 
-# generate from the model
+# Generate text from the model
 context = torch.zeros((1, 1), dtype=torch.long, device=device)
 print(decode(m.generate(context, max_new_tokens=500)[0].tolist()))

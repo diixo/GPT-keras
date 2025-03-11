@@ -8,10 +8,10 @@ block_size = 8 # what is the maximum context length for predictions?
 max_iters = 5000
 eval_interval = 100
 learning_rate = 1e-3
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 eval_iters = 200
 n_embd = 32
-# ------------
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 
 torch.manual_seed(1337)
 
@@ -44,8 +44,9 @@ def get_batch(split):
     x, y = x.to(device), y.to(device)
     return x, y
 
+
 @torch.no_grad()
-def estimate_loss():
+def estimate_loss(model):
     out = {}
     model.eval()
     for split in ['train', 'val']:
@@ -150,6 +151,7 @@ class BigramLanguageModel(nn.Module):
     def forward(self, idx, targets=None):
         B, T = idx.shape
 
+        # idx and targets are both (B=batch, T=time) tensor of integers
         tok_emb = self.token_embedding_table(idx)
         pos_emb = self.position_embedding_table(torch.arange(T, device=device))
         x = tok_emb + pos_emb
@@ -163,8 +165,8 @@ class BigramLanguageModel(nn.Module):
             logits = logits.view(B*T, C)
             targets = targets.view(B*T)
             loss = F.cross_entropy(logits, targets)
-
         return logits, loss
+
 
     def generate(self, idx, max_new_tokens):
         # idx is (B, T) array of indices in the current context
@@ -192,11 +194,6 @@ optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
 for iter in range(max_iters):
 
-    # every once in a while evaluate the loss on train and val sets
-    if iter % eval_interval == 0:
-        losses = estimate_loss()
-        print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
-
     # sample a batch of data
     xb, yb = get_batch('train')
 
@@ -206,10 +203,17 @@ for iter in range(max_iters):
     loss.backward()
     optimizer.step()
 
-# Final
-losses = estimate_loss()
-print(f"Final step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+    # every once in a while evaluate the loss on train and val sets
+    if iter % eval_interval == 0:
+        losses = estimate_loss(model)
+        print(f"...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
 
-# generate from the model
+
+total_params = sum(p.numel() for p in model.parameters())
+losses = estimate_loss(model)
+print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}, params: {total_params}")
+
+
+# Generate text from the model
 context = torch.zeros((1, 1), dtype=torch.long, device=device)
 print(decode(m.generate(context, max_new_tokens=500)[0].tolist()))
