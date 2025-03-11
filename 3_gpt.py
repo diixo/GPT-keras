@@ -2,10 +2,9 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 
-
 # Hyperparameters
-batch_size = 32
-block_size = 8
+batch_size = 32 # how many independent sequences will we process in parallel?
+block_size = 8  # what is the maximum context length for predictions?
 max_iters = 5000
 eval_interval = 100
 learning_rate = 1e-3
@@ -32,7 +31,7 @@ n = int(0.9 * len(data))
 train_data = data[:n]
 val_data = data[n:]
 
-
+# data loading
 def get_batch(split):
     data_split = train_data if split == 'train' else val_data
     ix = tf.random.uniform(shape=(batch_size,), maxval=len(data_split) - block_size, dtype=tf.int32)
@@ -41,7 +40,7 @@ def get_batch(split):
     return x, y
 
 
-def estimate_loss():
+def estimate_loss(model):
     out = {}
     model.trainable = False
     for split in ['train', 'val']:
@@ -167,6 +166,7 @@ class BigramLanguageModel(keras.Model):
 
 
     def generate(self, idx, max_new_tokens):
+        # idx is (B, T) array of indices in the current context
         for _ in tf.range(max_new_tokens):
             # crop idx to the last block_size token
             idx_cond = idx[:, -block_size:]
@@ -184,11 +184,11 @@ class BigramLanguageModel(keras.Model):
 
 
 def train_model(model: BigramLanguageModel):
-
     optimizer = tf.optimizers.AdamW(
         learning_rate=learning_rate,
         weight_decay=1e-2,
-        epsilon=1e-8)
+        epsilon=1e-8
+    )
 
     for iter in tf.range(max_iters):
 
@@ -205,10 +205,20 @@ def train_model(model: BigramLanguageModel):
         # backward pass
         gradients = tape.gradient(loss, model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+
+        if iter % eval_interval == 0:
+            losses = estimate_loss(model)
+
+            if not model.trainable_variables:
+                print(f"!!!Warning: trainable_variables is EMPTY on:{iter.numpy()}")
+            else:
+                print(f"...on {iter.numpy()}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
+
     
+    total_params = sum(tf.size(param).numpy() for param in model.trainable_variables)
     # final estimation:
-    losses = estimate_loss()
-    print(f"Final step {iter.numpy()}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+    losses = estimate_loss(model)
+    print(f"Final step {iter.numpy()}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}. Model.sz={total_params}")
 
 
 model = BigramLanguageModel(vocab_size)
