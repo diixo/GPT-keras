@@ -77,8 +77,10 @@ class Head(nn.Module):
         B,T,C = x.shape
         k = self.key(x)   # (B,T,hs)
         q = self.query(x) # (B,T,hs)
+        #print(k.shape[-1], C)
+        #assert(k.shape[-1] == C)
         # compute attention scores ("affinities")
-        wei = q @ k.transpose(-2,-1) * C**-0.5 # (B, T, hs) @ (B, hs, T) -> (B, T, T)
+        wei = q @ k.transpose(-2,-1) * k.shape[-1]**-0.5 # (B, T, hs) @ (B, hs, T) -> (B, T, T)
         wei = wei.masked_fill(self.tril[:T, :T] == 0, float('-inf')) # (B, T, T)
         wei = F.softmax(wei, dim=-1) # (B, T, T)
         # perform the weighted aggregation of the values
