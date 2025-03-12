@@ -3,8 +3,8 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 # hyperparameters
-batch_size = 64 # how many independent sequences will we process in parallel?
-block_size = 128 # what is the maximum context length for predictions?
+batch_size = 32  # amount independent sequences will we process in parallel
+block_size = 128 # maximum context length for predictions
 max_iters = 5000
 eval_interval = 100
 learning_rate = 3e-4
@@ -81,8 +81,10 @@ class Head(nn.Module):
         B,T,C = x.shape
         k = self.key(x)   # (B,T,hs)
         q = self.query(x) # (B,T,hs)
+        #print(k.shape[-1], C)
+        #assert(k.shape[-1] == C)
         # compute attention scores ("affinities")
-        wei = q @ k.transpose(-2,-1) * C**-0.5 # (B, T, hs) @ (B, hs, T) -> (B, T, T)
+        wei = q @ k.transpose(-2,-1) * k.shape[-1]**-0.5 # (B, T, hs) @ (B, hs, T) -> (B, T, T)
         wei = wei.masked_fill(self.tril[:T, :T] == 0, float('-inf')) # (B, T, T)
         wei = F.softmax(wei, dim=-1) # (B, T, T)
         wei = self.dropout(wei)
@@ -98,7 +100,7 @@ class MultiHeadAttention(nn.Module):
     def __init__(self, num_heads, head_size):
         super().__init__()
         self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
-        self.proj = nn.Linear(n_embd, n_embd)
+        self.proj = nn.Linear(head_size * num_heads, n_embd)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
@@ -136,10 +138,13 @@ class Block(nn.Module):
         self.ln1 = nn.LayerNorm(n_embd)
         self.ln2 = nn.LayerNorm(n_embd)
 
+        self.dropout_sa = nn.Dropout(dropout)
+        self.dropout_ffn = nn.Dropout(dropout)
+
     def forward(self, x):
         # Pre-Layer Normalization (Pre-LN)
-        x = x + self.sa(self.ln1(x))
-        x = x + self.ffwd(self.ln2(x))
+        x = x + self.dropout_sa(self.sa(self.ln1(x)))       # Dropout после Self-Attention
+        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))    # Dropout после FFN
         return x
 
 
@@ -195,9 +200,12 @@ class BigramLanguageModel(nn.Module):
 
 model = BigramLanguageModel(vocab_size)
 m = model.to(device)
+# print the number of parameters in the model
+print(sum(p.numel() for p in m.parameters())/1e6, 'M parameters')
 
 # create a PyTorch optimizer
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+
 
 for iter in range(max_iters):
 
@@ -214,11 +222,13 @@ for iter in range(max_iters):
     if iter % eval_interval == 0:
         losses = estimate_loss(model)
         print(f"...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
+    else:
+        print(f"...on {iter}(th)")
 
 
-total_params = sum(p.numel() for p in model.parameters())
+# block_size=64: ...on 4900(th): train_loss(1.5031), val_loss(1.6894)
 losses = estimate_loss(model)
-print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}, params: {total_params}")
+print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
 
 
 # Generate text from the model
