@@ -18,11 +18,15 @@ Andrej Karpathy's invaluable resource, guiding the process of coding GPT from th
 
 - **0_gpt.py**: one head of self-attention implementation
 
-- **1_gpt.py**(**1_gpt_pt.py**): multi-heading of self-attention implementation
+- **1_gpt.py** (**1_gpt_pt.py**): multi-heading of self-attention implementation
 
-- **2_gpt.py**(**2_gpt_pt.py**): added simple feed-forward layer
+- **2_gpt.py** (**2_gpt_pt.py**): added simple feed-forward layer
 
-- **3_gpt.py**(**3_gpt_pt.py**): feed-forward + transformation block + residual connections
+- **3_gpt.py** (**3_gpt_pt.py**): feed-forward + transformation block + residual connections
+
+- **4_gpt.py** (**4_gpt_pt.py**): pre-layer block normalization
+
+- **5_gpt.py** (**5_gpt_pt.py**): final implementation
 
 - **gpt.py**: A Keras code that includes the code for building a GPT model from scratch. It covers the implementation of a basic transformer architecture for text generation. You can follow the notebook to understand the inner workings of GPT.
 
@@ -46,3 +50,7 @@ The code in this repository is thoroughly explained in the accompanying code, th
 * https://arxiv.org/abs/1512.03385: Deep Residual Learning for Image Recognition
 
 * https://arxiv.org/abs/1606.08415: Gaussian Error Linear Unit (GELU)
+
+* https://arxiv.org/abs/2501.07108: How GPT learns layer by layer
+
+* https://arxiv.org/abs/2005.14165v4: Language Models are Few-Shot Learners
