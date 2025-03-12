@@ -54,3 +54,13 @@ The code in this repository is thoroughly explained in the accompanying code, th
 * https://arxiv.org/abs/2501.07108: How GPT learns layer by layer
 
 * https://arxiv.org/abs/2005.14165v4: Language Models are Few-Shot Learners
+
+* https://keras.io/examples/generative/text_generation_with_miniature_gpt
+
+* https://keras.io/examples/generative/text_generation_gpt
+
+* https://keras.io/examples/generative/text_generation_fnet
+
+* https://bechirtr97.medium.com/gpt-from-scratch-for-product-review-generation-and-market-research-3c7444ea00cf
+
+* Generative Deep Learning, 2nd Edition by David Foster
