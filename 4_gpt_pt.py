@@ -95,7 +95,7 @@ class MultiHeadAttention(nn.Module):
     def __init__(self, num_heads, head_size):
         super().__init__()
         self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
-        self.proj = nn.Linear(n_embd, n_embd)
+        self.proj = nn.Linear(head_size * num_heads, n_embd)
 
     def forward(self, x):
         out = torch.cat([h(x) for h in self.heads], dim=-1)
@@ -194,9 +194,12 @@ class BigramLanguageModel(nn.Module):
 
 model = BigramLanguageModel(vocab_size)
 m = model.to(device)
+# print the number of parameters in the model
+print(sum(p.numel() for p in m.parameters())/1e6, 'M parameters')
 
 # create a PyTorch optimizer
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+
 
 for iter in range(max_iters):
 
@@ -213,11 +216,12 @@ for iter in range(max_iters):
     if iter % eval_interval == 0:
         losses = estimate_loss(model)
         print(f"...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
+    else:
+        print(f"...on {iter}(th)")
 
 
-total_params = sum(p.numel() for p in model.parameters())
 losses = estimate_loss(model)
-print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}, params: {total_params}")
+print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
 
 
 # Generate text from the model
