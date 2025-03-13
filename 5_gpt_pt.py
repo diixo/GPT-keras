@@ -2,12 +2,12 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-# hyperparameters
-batch_size = 32  # amount independent sequences will we process in parallel
-block_size = 64  # maximum context length for predictions
+# Hyperparameters
+batch_size = 32 # amount independent sequences will we process in parallel
+block_size = 64 # maximum context length for predictions
 max_iters = 5000
-eval_interval = 100
-learning_rate = 3e-4
+eval_interval = 1000
+learning_rate = 1e-3
 eval_iters = 200
 n_embd = 256
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -157,7 +157,7 @@ class BigramLanguageModel(nn.Module):
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
         self.position_embedding_table = nn.Embedding(block_size, n_embd)
         self.blocks = nn.Sequential(*[Block(n_embd, n_head=n_head) for _ in range(n_layer)])
-
+        self.ln_f = nn.LayerNorm(n_embd) # final layer norm
         self.lm_head = nn.Linear(n_embd, vocab_size)
 
     def forward(self, idx, targets=None):
@@ -168,6 +168,7 @@ class BigramLanguageModel(nn.Module):
         pos_emb = self.position_embedding_table(torch.arange(T, device=device))
         x = tok_emb + pos_emb
         x = self.blocks(x)  # (B,T,C)
+        x = self.ln_f(x)    # (B,T,C)
         logits = self.lm_head(x)
 
         if targets is None:
@@ -200,12 +201,12 @@ class BigramLanguageModel(nn.Module):
 
 model = BigramLanguageModel(vocab_size)
 m = model.to(device)
-# print the number of parameters in the model
-print(sum(p.numel() for p in m.parameters())/1e6, 'M parameters')
 
 # create a PyTorch optimizer
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
+total_params = sum(p.numel() for p in m.parameters())
+print(f"...found model.sz={total_params} params.")
 
 for iter in range(max_iters):
 
@@ -223,10 +224,11 @@ for iter in range(max_iters):
         losses = estimate_loss(model)
         print(f"...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
     else:
-        print(f"...on {iter}(th)")
+        if (iter % 100 == 0) and (iter > 0):
+            print(f"...on {iter}(th) epoch...")
 
 
-# block_size=64: ...on 4900(th): train_loss(1.5031), val_loss(1.6894)
+# block_size=64: Final step 4999: train_loss=1.4170, val_loss=1.6195
 losses = estimate_loss(model)
 print(f"Final step {iter}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
 
