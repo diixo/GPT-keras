@@ -63,4 +63,8 @@ The code in this repository is thoroughly explained in the accompanying code, th
 
 * https://bechirtr97.medium.com/gpt-from-scratch-for-product-review-generation-and-market-research-3c7444ea00cf
 
-* Generative Deep Learning, 2nd Edition by David Foster
+* **Generative Deep Learning**, 2nd Edition by David Foster
+
+* https://medium.com/@vipul.koti333/evolution-of-gpt-models-gpt-1-to-gpt-4-0238ee07a29b
+
+* https://arxiv.org/html/2501.06126v1: Merging Feed-Forward Sublayers for Compressed Transformers
