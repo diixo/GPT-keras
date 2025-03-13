@@ -28,6 +28,8 @@ Andrej Karpathy's invaluable resource, guiding the process of coding GPT from th
 
 - **5_gpt.py** (**5_gpt_pt.py**): final implementation
 
+- **5_gpt_model.py**: adaptation to keras-model
+
 - **gpt.py**: A Keras code that includes the code for building a GPT model from scratch. It covers the implementation of a basic transformer architecture for text generation. You can follow the notebook to understand the inner workings of GPT.
 
 - **gpt_model_weights.h5**: Pre-trained weights for the GPT model after 5,000 iterations. You can use these weights to generate text using the implemented GPT model without going through the training process.
