@@ -3,10 +3,10 @@ from tensorflow import keras
 from keras import layers
 
 # Hyperparameters
-batch_size = 32 # how many independent sequences will we process in parallel?
-block_size = 64 # what is the maximum context length for predictions?
+batch_size = 32 # amount independent sequences will we process in parallel
+block_size = 64 # maximum context length for predictions
 max_iters = 5000
-eval_interval = 100
+eval_interval = 1000
 learning_rate = 1e-3
 eval_iters = 200
 n_embd = 256
@@ -66,10 +66,11 @@ class Head(tf.keras.layers.Layer):
         self.key = layers.Dense(units=head_size, use_bias=False)
         self.query = layers.Dense(units=head_size, use_bias=False)
         self.value = layers.Dense(units=head_size, use_bias=False)
+        self.head_size = head_size
 
         tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
         self.tril = tf.constant(tril)
-        self.dropout = tf.keras.layers.Dropout(dropout)
+        self.dropout = layers.Dropout(dropout)
 
 
     def call(self, x):
@@ -90,6 +91,8 @@ class Head(tf.keras.layers.Layer):
         # perform the weighted aggregation of the values
         v = self.value(x)                       # (B, T, head_size)
         out = tf.matmul(wei, v)                 # (B, T, T) @ (B, T, head_size) --> (B, T, head_size)
+
+        assert out.shape[1] == x.shape[1] and out.shape[2] == self.head_size
         return out
 
 
@@ -100,11 +103,13 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         super(MultiHeadAttention, self).__init__()
         self.heads = [Head(head_size) for _ in range(num_heads)]
         self.proj = layers.Dense(units=n_embd)  # head_size * num_heads, n_embd
-        self.dropout = tf.keras.layers.Dropout(dropout)
+        self.dropout = layers.Dropout(dropout)
 
     def call(self, x):
         out = tf.concat([h(x) for h in self.heads], axis=-1)
         out = self.dropout(self.proj(out))
+
+        assert out.shape[1] == x.shape[1] and out.shape[2] == n_embd
         return out
 
 
@@ -116,12 +121,15 @@ class FeedForward(tf.keras.layers.Layer):
         self.net = tf.keras.Sequential([
             layers.Dense(units=4*n_embd),
             layers.ReLU(),
-            tf.keras.layers.Dropout(dropout),
+            layers.Dropout(dropout),
             layers.Dense(units=n_embd),
         ])
+        self.n_embd = n_embd
 
     def call(self, x):
-        return self.net(x)
+        out = self.net(x)   # B, T, n_embd
+        assert out.shape[1] == x.shape[1] and out.shape[2] == self.n_embd
+        return out
 
 
 class Block(tf.keras.layers.Layer):
@@ -139,9 +147,9 @@ class Block(tf.keras.layers.Layer):
         self.dropout_ffn = layers.Dropout(dropout)
 
     def call(self, x):
-        # Pre-LN: нормализация перед MHA
-        x = x + self.dropout_sa(self.sa(self.ln1(x)))  # dropout только на выходе MHA
-        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))  # dropout только на выходе FFN
+        # Pre-LN: normalization before MHA
+        x = x + self.dropout_sa(self.sa(self.ln1(x)))     # dropout output only MHA
+        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))  # dropout output only FFN
         return x
 
 
@@ -153,6 +161,7 @@ class BigramLanguageModel(keras.Model):
         self.token_embedding_table = layers.Embedding(vocab_size, n_embd)
         self.position_embedding_table = layers.Embedding(block_size, n_embd)
         self.blocks = tf.keras.Sequential([Block(n_embd, n_head=n_head) for _ in range(n_layer)])
+        self.ln_f = layers.LayerNormalization(epsilon=1e-6) # final layer norm
         self.lm_head = layers.Dense(units=vocab_size, input_shape=(n_embd,))
 
 
@@ -164,6 +173,7 @@ class BigramLanguageModel(keras.Model):
         pos_emb = self.position_embedding_table(tf.range(T))    # (T, C=n_embd)
         x = tok_emb + pos_emb               # (B, T, C)
         x = self.blocks(x)                  # (B, T, C)
+        x = self.ln_f(x)                    # (B, T, C)
         logits = self.lm_head(x)            # (B, T, vocab_sz)
 
         if targets is None:
@@ -195,11 +205,12 @@ class BigramLanguageModel(keras.Model):
 
 
 def train_model(model: BigramLanguageModel):
+
     optimizer = tf.optimizers.AdamW(
         learning_rate=learning_rate,
         weight_decay=1e-2,
-        epsilon=1e-7
-    )
+        epsilon=1e-7)
+
 
     for iter in tf.range(max_iters):
 
@@ -220,7 +231,9 @@ def train_model(model: BigramLanguageModel):
             else:
                 print(f"...on {iter.numpy()}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
         else:
-            print(f"...on {iter}(th)")
+            if (iter % 100 == 0) and (iter > 0):
+                print(f"...on {iter}(th) epoch...")
+
 
     
     total_params = sum(tf.size(param).numpy() for param in model.trainable_variables)
