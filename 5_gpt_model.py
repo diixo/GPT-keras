@@ -52,9 +52,9 @@ class Head(tf.keras.layers.Layer):
 
     def __init__(self, head_size):
         super().__init__()
-        self.key = layers.Dense(units=head_size, use_bias=False)
-        self.query = layers.Dense(units=head_size, use_bias=False)
-        self.value = layers.Dense(units=head_size, use_bias=False)
+        self.key = layers.Dense(input_shape=(n_embd,), units=head_size, use_bias=False)
+        self.query = layers.Dense(input_shape=(n_embd,), units=head_size, use_bias=False)
+        self.value = layers.Dense(input_shape=(n_embd,), units=head_size, use_bias=False)
         self.head_size = head_size
 
         tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
@@ -62,7 +62,7 @@ class Head(tf.keras.layers.Layer):
         self.dropout = layers.Dropout(dropout)
 
 
-    def call(self, x):
+    def call(self, x, training=False):
         # input of size (batch, time-step, channels)
         # output of size (batch, time-step, head_size)
         B, T, C = x.shape
@@ -75,7 +75,7 @@ class Head(tf.keras.layers.Layer):
         wei = tf.matmul(q, k_T) * scale         # (B, T, head_size) @ (B, head_size, T) --> (B, T, T)
         wei = tf.where(self.tril[:T, :T] == 0, float('-inf'), wei)  # (B, T, T)
         wei = tf.nn.softmax(wei, axis=-1)       # (B, T, T)
-        wei = self.dropout(wei)
+        wei = self.dropout(wei, training=training)
 
         # perform the weighted aggregation of the values
         v = self.value(x)                       # (B, T, head_size)
@@ -91,12 +91,12 @@ class MultiHeadAttention(tf.keras.layers.Layer):
     def __init__(self, num_heads, head_size):
         super().__init__()
         self.heads = [Head(head_size) for _ in range(num_heads)]
-        self.proj = layers.Dense(units=n_embd)  # head_size * num_heads, n_embd
+        self.proj = layers.Dense(input_shape=(head_size*num_heads,), units=n_embd)  # head_size * num_heads, n_embd
         self.dropout = layers.Dropout(dropout)
 
-    def call(self, x):
+    def call(self, x, training=False):
         out = tf.concat([h(x) for h in self.heads], axis=-1)
-        out = self.dropout(self.proj(out))
+        out = self.dropout(self.proj(out), training=training)
 
         assert out.shape[1] == x.shape[1] and out.shape[2] == n_embd
         return out
@@ -108,15 +108,15 @@ class FeedForward(tf.keras.layers.Layer):
     def __init__(self, n_embd):
         super().__init__()
         self.net = tf.keras.Sequential([
-            layers.Dense(units=4*n_embd),
+            layers.Dense(input_shape=(n_embd,), units=4*n_embd),
             layers.ReLU(),
             layers.Dropout(dropout),
-            layers.Dense(units=n_embd),
+            layers.Dense(input_shape=(4*n_embd,), units=n_embd),
         ])
         self.n_embd = n_embd
 
-    def call(self, x):
-        out = self.net(x)   # B, T, n_embd
+    def call(self, x, training=False):
+        out = self.net(x, training=training)   # B, T, n_embd
         assert out.shape[1] == x.shape[1] and out.shape[2] == self.n_embd
         return out
 
@@ -135,10 +135,10 @@ class Block(tf.keras.layers.Layer):
         self.dropout_sa = layers.Dropout(dropout_rate)
         self.dropout_ffn = layers.Dropout(dropout_rate)
 
-    def call(self, x):
+    def call(self, x, training=False):
         # Pre-LN: normalization before MHA
-        x = x + self.dropout_sa(self.sa(self.ln1(x)))     # dropout output only MHA
-        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))  # dropout output only FFN
+        x = x + self.dropout_sa(self.sa(self.ln1(x)), training=training)     # dropout output only MHA
+        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)), training=training)  # dropout output only FFN
         return x
 
 
@@ -152,7 +152,7 @@ class BigramLanguageLayer(layers.Layer):
         self.position_embedding_table = layers.Embedding(block_size, n_embd)
         self.blocks = tf.keras.Sequential([Block(n_embd, n_head, dropout_rate) for _ in range(n_block)])
         self.ln_f = layers.LayerNormalization(epsilon=1e-6) # final layer norm
-        self.lm_head = layers.Dense(units=vocab_size, input_shape=(n_embd,))
+        self.lm_head = layers.Dense(input_shape=(n_embd,), units=vocab_size)
 
 
     def call(self, idx, targets=None):
@@ -200,7 +200,7 @@ class TransformerModel:
         self.vocab_size = vocab_size
 
         keras.utils.set_random_seed(2081)
-        inputs = keras.Input((block_size,))
+        inputs = keras.Input((block_size,), dtype="int32")
         outputs = BigramLanguageLayer(vocab_size, n_embd, n_head, n_layer, dropout_rate)(inputs)
         self.model = keras.Model(inputs, outputs)
 
