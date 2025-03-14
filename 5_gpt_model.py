@@ -66,8 +66,6 @@ class Head(layers.Layer):
         self.tril = tf.constant(tril)
         self.dropout = layers.Dropout(self.dropout_rate)
 
-        super().build(input_shape)
-
 
     def call(self, x):
         # input of size (batch, time-step, channels)
@@ -104,7 +102,6 @@ class MultiHeadAttention(layers.Layer):
         self.heads = [Head(self.head_size) for _ in range(self.num_heads)]
         self.proj = layers.Dense(units=n_embd)  # (head_size * num_heads, n_embd)
         self.dropout = layers.Dropout(dropout_rate)
-        super().build(input_shape)
 
     def call(self, x, training=False):
         out = tf.concat([h(x) for h in self.heads], axis=-1)
@@ -128,7 +125,6 @@ class FeedForward(layers.Layer):
             layers.Dropout(dropout_rate),
             layers.Dense(units=self.n_embd),    # (4*n_embd, n_embd)
         ])
-        super().build(input_shape)
 
     def call(self, x, training=False):
         out = self.net(x, training=training)   # B, T, n_embd
@@ -153,12 +149,12 @@ class Block(layers.Layer):
 
         self.dropout_sa = layers.Dropout(dropout_rate)
         self.dropout_ffn = layers.Dropout(dropout_rate)
-        super().build(input_shape)
+
 
     def call(self, x, training=False):
         # Pre-LN: normalization before MHA
-        x = x + self.dropout_sa(self.sa(self.ln1(x)))     # dropout output only MHA
-        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))  # dropout output only FFN
+        x = x + self.dropout_sa(self.sa(self.ln1(x)), training=training)     # dropout output only MHA
+        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)), training=training)  # dropout output only FFN
         return x
 
 
@@ -183,7 +179,6 @@ class BigramLanguageLayer(layers.Layer):
         self.blocks = keras.Sequential([Block(self.n_embd, self.n_head) for _ in range(self.n_block)])
         self.ln_f = layers.LayerNormalization(epsilon=1e-6) # final layer norm
         self.lm_head = layers.Dense(units=self.vocab_size)  # (n_embd, vocab_size)
-        super().build(input_shape)
 
 
     def call(self, idx, targets=None):
@@ -197,6 +192,7 @@ class BigramLanguageLayer(layers.Layer):
         x = self.blocks(x)                  # (B, T, C)
         x = self.ln_f(x)                    # (B, T, C)
         logits = self.lm_head(x)            # (B, T, vocab_sz)
+
         if targets is None:
             return logits
         else:
