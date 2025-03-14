@@ -51,7 +51,7 @@ class Head(tf.keras.layers.Layer):
     """ one head of self-attention """
 
     def __init__(self, head_size):
-        super(Head, self).__init__()
+        super().__init__()
         self.key = layers.Dense(units=head_size, use_bias=False)
         self.query = layers.Dense(units=head_size, use_bias=False)
         self.value = layers.Dense(units=head_size, use_bias=False)
@@ -89,7 +89,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
     """ multiple heads of self-attention in parallel """
 
     def __init__(self, num_heads, head_size):
-        super(MultiHeadAttention, self).__init__()
+        super().__init__()
         self.heads = [Head(head_size) for _ in range(num_heads)]
         self.proj = layers.Dense(units=n_embd)  # head_size * num_heads, n_embd
         self.dropout = layers.Dropout(dropout)
@@ -106,7 +106,7 @@ class FeedForward(tf.keras.layers.Layer):
     """ a simple linear layer followed by a non-linearity """
 
     def __init__(self, n_embd):
-        super(FeedForward, self).__init__()
+        super().__init__()
         self.net = tf.keras.Sequential([
             layers.Dense(units=4*n_embd),
             layers.ReLU(),
@@ -125,7 +125,7 @@ class Block(tf.keras.layers.Layer):
     """ Transformer block: communication followed by computation """
 
     def __init__(self, n_embd, n_head, dropout_rate=0.2):
-        super(Block, self).__init__()
+        super().__init__()
         head_size = n_embd // n_head
         self.sa = MultiHeadAttention(n_head, head_size)
         self.ffwd = FeedForward(n_embd)

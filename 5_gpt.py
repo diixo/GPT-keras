@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 
+
 # Hyperparameters
 batch_size = 32 # amount independent sequences will we process in parallel
 block_size = 64 # maximum context length for predictions
@@ -9,8 +10,8 @@ max_iters = 5000
 eval_interval = 1000
 learning_rate = 1e-3
 eval_iters = 200
-n_embd = 256
 
+n_embd = 256
 n_head = 4
 n_layer = 4
 dropout = 0.2
@@ -62,7 +63,7 @@ class Head(tf.keras.layers.Layer):
     """ one head of self-attention """
 
     def __init__(self, head_size):
-        super(Head, self).__init__()
+        super().__init__()
         self.key = layers.Dense(units=head_size, use_bias=False)
         self.query = layers.Dense(units=head_size, use_bias=False)
         self.value = layers.Dense(units=head_size, use_bias=False)
@@ -100,7 +101,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
     """ multiple heads of self-attention in parallel """
 
     def __init__(self, num_heads, head_size):
-        super(MultiHeadAttention, self).__init__()
+        super().__init__()
         self.heads = [Head(head_size) for _ in range(num_heads)]
         self.proj = layers.Dense(units=n_embd)  # head_size * num_heads, n_embd
         self.dropout = layers.Dropout(dropout)
@@ -117,7 +118,7 @@ class FeedForward(tf.keras.layers.Layer):
     """ a simple linear layer followed by a non-linearity """
 
     def __init__(self, n_embd):
-        super(FeedForward, self).__init__()
+        super().__init__()
         self.net = tf.keras.Sequential([
             layers.Dense(units=4*n_embd),
             layers.ReLU(),
@@ -136,7 +137,7 @@ class Block(tf.keras.layers.Layer):
     """ Transformer block: communication followed by computation """
 
     def __init__(self, n_embd, n_head):
-        super(Block, self).__init__()
+        super().__init__()
         head_size = n_embd // n_head
         self.sa = MultiHeadAttention(n_head, head_size)
         self.ffwd = FeedForward(n_embd)
@@ -156,13 +157,13 @@ class Block(tf.keras.layers.Layer):
 class BigramLanguageModel(keras.Model):
 
     def __init__(self, vocab_size):
-        super(BigramLanguageModel, self).__init__()
+        super().__init__()
         # each token directly reads off the logits for the next token from a lookup table
         self.token_embedding_table = layers.Embedding(vocab_size, n_embd)
         self.position_embedding_table = layers.Embedding(block_size, n_embd)
         self.blocks = tf.keras.Sequential([Block(n_embd, n_head=n_head) for _ in range(n_layer)])
         self.ln_f = layers.LayerNormalization(epsilon=1e-6) # final layer norm
-        self.lm_head = layers.Dense(units=vocab_size, input_shape=(n_embd,))
+        self.lm_head = layers.Dense(input_shape=(n_embd,), units=vocab_size)
 
 
     def call(self, idx, targets=None):
