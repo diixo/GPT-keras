@@ -6,12 +6,12 @@ import numpy as np
 
 # ---------- data-parameters ----------
 batch_size = 32 # amount independent sequences will we process in parallel
-block_size = 80 # maximum context length for predictions
+block_size = 64 # maximum context length for predictions
 
 max_iters = 5000
 eval_interval = 1000
 learning_rate = 1e-3
-eval_iters = 200
+eval_iters = 100
 
 n_embd = 256
 n_head = 4
@@ -72,6 +72,8 @@ class Head(layers.Layer):
         # input of size (batch, time-step, channels)
         # output of size (batch, time-step, head_size)
         B, T, C = x.shape
+        assert(block_size == T)
+
         k = self.key(x)                         # (B, T, head_size)
         q = self.query(x)                       # (B, T, head_size)
         k_T = tf.transpose(k, perm=[0, 2, 1])   # (B, T, head_size) --> (B, head_size, T)
@@ -172,6 +174,7 @@ class BigramLanguageLayer(layers.Layer):
         B, T = idx.shape
         assert(block_size == T)
 
+
         # idx and targets are both (B=batch, T=time) tensor of integers
         tok_emb = self.token_embedding_table(idx)               # (B, T, C=n_embd)
         pos_emb = self.position_embedding_table(tf.range(T))    # (T, C=n_embd)
@@ -190,24 +193,6 @@ class BigramLanguageLayer(layers.Layer):
             return logits, loss
 
 
-    def generate(self, idx, max_new_tokens):
-        # idx is (B, T) array of indices in the current context
-        for _ in tf.range(max_new_tokens):
-            # crop idx to the last block_size token
-            idx_cond = idx[:, -block_size:]
-            # get the prediction by logits, loss ignored. 
-            logits, loss = self(idx_cond)   # forward to get logits = (B, T, C)
-            # focus only on last time step
-            logits = logits[:, -1, :]       # becomes (B, C)
-            # apply softmax to get max probability
-            probs = tf.nn.softmax(logits, axis=-1)  # (B, C)
-            # get next char-index
-            idx_next = tf.random.categorical(tf.math.log(probs), num_samples=1, dtype=tf.int64) # (B, 1)
-            # concatenate to stream of integer indices
-            idx = tf.concat([idx, idx_next], axis=1)    # (B, T+1)
-        return idx
-
-
 class TransformerModel:
 
     def __init__(self, vocab_size, n_embd, n_head, n_layer, block_size, learning_rate):
@@ -220,7 +205,7 @@ class TransformerModel:
         self.model.compile(
             optimizer=tf.optimizers.AdamW(
                 learning_rate=learning_rate,
-                weight_decay=1e-2,
+                weight_decay=5e-3,
                 epsilon=1e-7),
             loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True))
         self.model.summary()
@@ -239,6 +224,26 @@ class TransformerModel:
         return out
 
 
+    def generate_text(self, max_new_tokens):
+        idx = tf.zeros((1, 1), dtype=tf.int64)  # (B, T)
+
+        # idx is (B, T) array of indices in the current context
+        for _ in tf.range(max_new_tokens):
+            # crop idx to the last block_size token
+            idx_cond = idx[:, -block_size:]
+            # get the prediction by logits, loss ignored.
+            logits = self.model(idx_cond)   # forward to get logits = (B, T, C)
+            # focus only on last time step
+            logits = logits[:, -1, :]       # becomes (B, C)
+            # apply softmax to get max probability
+            probs = tf.nn.softmax(logits, axis=-1)  # (B, C)
+            # get next char-index
+            idx_next = tf.random.categorical(tf.math.log(probs), num_samples=1, dtype=tf.int64) # (B, 1)
+            # concatenate to stream of integer indices
+            idx = tf.concat([idx, idx_next], axis=1)    # (B, T+1)
+        return idx.numpy()[0]
+
+
     def train_on_batch(self, x, y, *args, **kwargs):
         return self.model.train_on_batch(x, y, *args, **kwargs)
 
@@ -248,27 +253,24 @@ def train_model():
 
     model = TransformerModel(vocab_size, n_embd, n_head, n_layer, block_size, learning_rate)
 
-    for iter in tf.range(max_iters):
+    for iter in range(max_iters):
 
         Xb, Yb = fetch_batch("train")
         model.train_on_batch(Xb, Yb)
 
         if (iter % eval_interval == 0):
             losses = model.estimate_loss(eval_iters)
-            print(f"...on {iter.numpy()}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
+            print(f"...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
         else:
             if (iter % 100 == 0):
-                print(f"...on {iter}(th) epoch...")
+                print(f"...on {iter}(th) train_loss={loss:.4f}")
 
     # final estimation:
     losses = model.estimate_loss(eval_iters)
-    print(f"Final step {iter.numpy()}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
+    print(f"Finished, steps=({iter+1}): train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
     return model
 
 
-# Generate text from the model
-idx = tf.zeros((1, 1), dtype=tf.int64)  # (B, T)
-
 model = train_model()
-generated_text = decode(model.generate(idx, max_new_tokens=500).numpy()[0])
+generated_text = decode(model.generate_text(max_new_tokens=500))
 print(generated_text)
