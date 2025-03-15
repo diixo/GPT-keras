@@ -14,9 +14,11 @@ eval_iters = 200
 n_embd = 256
 n_head = 4
 n_layer = 4
-dropout = 0.2
 
-tf.random.set_seed(1337)
+dropout_rate = 0.2
+random_seed = 2081
+
+tf.random.set_seed(random_seed)
 
 
 with open('input.txt', 'r', encoding='utf-8') as f:
@@ -35,6 +37,7 @@ data = tf.constant(encode(text), dtype=tf.int64)
 n = int(0.9 * len(data))
 train_data = data[:n]
 val_data = data[n:]
+
 
 # data loading
 def get_batch(split):
@@ -59,7 +62,7 @@ def estimate_loss(model):
     return out
 
 
-class Head(tf.keras.layers.Layer):
+class Head(layers.Layer):
     """ one head of self-attention """
 
     def __init__(self, head_size):
@@ -71,7 +74,7 @@ class Head(tf.keras.layers.Layer):
 
         tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
         self.tril = tf.constant(tril)
-        self.dropout = layers.Dropout(dropout)
+        self.dropout = layers.Dropout(dropout_rate)
 
 
     def call(self, x):
@@ -97,14 +100,14 @@ class Head(tf.keras.layers.Layer):
         return out
 
 
-class MultiHeadAttention(tf.keras.layers.Layer):
+class MultiHeadAttention(layers.Layer):
     """ multiple heads of self-attention in parallel """
 
     def __init__(self, num_heads, head_size):
         super().__init__()
         self.heads = [Head(head_size) for _ in range(num_heads)]
         self.proj = layers.Dense(units=n_embd)  # head_size * num_heads, n_embd
-        self.dropout = layers.Dropout(dropout)
+        self.dropout = layers.Dropout(dropout_rate)
 
     def call(self, x):
         out = tf.concat([h(x) for h in self.heads], axis=-1)
@@ -114,7 +117,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         return out
 
 
-class FeedForward(tf.keras.layers.Layer):
+class FeedForward(layers.Layer):
     """ a simple linear layer followed by a non-linearity """
 
     def __init__(self, n_embd):
@@ -122,7 +125,7 @@ class FeedForward(tf.keras.layers.Layer):
         self.net = tf.keras.Sequential([
             layers.Dense(units=4*n_embd),
             layers.ReLU(),
-            layers.Dropout(dropout),
+            layers.Dropout(dropout_rate),
             layers.Dense(units=n_embd),
         ])
         self.n_embd = n_embd
@@ -133,7 +136,7 @@ class FeedForward(tf.keras.layers.Layer):
         return out
 
 
-class Block(tf.keras.layers.Layer):
+class Block(layers.Layer):
     """ Transformer block: communication followed by computation """
 
     def __init__(self, n_embd, n_head):
@@ -144,8 +147,8 @@ class Block(tf.keras.layers.Layer):
         self.ln1 = layers.LayerNormalization(epsilon=1e-6)
         self.ln2 = layers.LayerNormalization(epsilon=1e-6)
 
-        self.dropout_sa = layers.Dropout(dropout)
-        self.dropout_ffn = layers.Dropout(dropout)
+        self.dropout_sa = layers.Dropout(dropout_rate)
+        self.dropout_ffn = layers.Dropout(dropout_rate)
 
     def call(self, x):
         # Pre-LN: normalization before MHA
@@ -168,6 +171,7 @@ class BigramLanguageModel(keras.Model):
 
     def call(self, idx, targets=None):
         B, T = idx.shape
+        assert(block_size == T)
 
         # idx and targets are both (B=batch, T=time) tensor of integers
         tok_emb = self.token_embedding_table(idx)               # (B, T, C=n_embd)
@@ -215,11 +219,11 @@ def train_model(model: BigramLanguageModel):
 
     for iter in tf.range(max_iters):
 
-        xb, yb = get_batch('train')
+        Xb, Yb = get_batch("train")
 
         with tf.GradientTape() as tape:
             # forward pass
-            logits, loss = model(xb, yb)
+            logits, loss = model(Xb, Yb)
 
         # backward pass
         gradients = tape.gradient(loss, model.trainable_variables)
