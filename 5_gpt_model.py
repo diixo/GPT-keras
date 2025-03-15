@@ -244,14 +244,13 @@ class TransformerModel:
         self.model.summary()
 
 
-    def estimate_loss(self):
+    def estimate_loss(self, num_iters: int) -> dict:
         out = {}
         self.model.trainable = False
-        for split in ['train', 'val']:
+        for split in ["train", "val"]:
             losses = tf.zeros(eval_iters, dtype=tf.float32)
             for k in range(eval_iters):
-                X, Y = get_batch(split)
-                logits, loss = self.model(X, Y)
+                loss = self.model.evaluate(*get_batch(split), verbose=0)
                 losses = tf.tensor_scatter_nd_add(losses, [[k]], [loss])
             out[split] = tf.reduce_mean(losses)
         self.model.trainable = True
@@ -269,22 +268,20 @@ def train_model():
 
     for iter in tf.range(max_iters):
 
-        Xb, Yb = get_batch('train')
+        Xb, Yb = get_batch("train")
 
         model.train_on_batch(Xb, Yb)
 
-        if iter % eval_interval == 0:
-            #losses = model.estimate_loss()
-            losses = None
-            if losses:
-                print(f"...on {iter.numpy()}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
+        if (iter % eval_interval == 0):
+            losses = model.estimate_loss(eval_iters)
+            print(f"...on {iter.numpy()}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
         else:
-            if (iter % 100 == 0) and (iter > 0):
+            if (iter % 100 == 0):
                 print(f"...on {iter}(th) epoch...")
 
 
     # final estimation:
-    losses = model.estimate_loss()
+    losses = model.estimate_loss(eval_iters)
     print(f"Final step {iter.numpy()}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
     return model
 
