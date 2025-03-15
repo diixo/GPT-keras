@@ -122,13 +122,14 @@ class FeedForward(layers.Layer):
 
     def __init__(self, n_embd):
         super().__init__()
+        self.n_embd = n_embd
+
         self.net = tf.keras.Sequential([
-            layers.Dense(units=4*n_embd),
+            layers.Dense(units=4*n_embd),  # (n_embd, 4*n_embd)
             layers.ReLU(),
             layers.Dropout(dropout_rate),
-            layers.Dense(units=n_embd),
+            layers.Dense(units=n_embd),    # (4*n_embd, n_embd)
         ])
-        self.n_embd = n_embd
 
     def call(self, x):
         out = self.net(x)   # B, T, n_embd
@@ -140,8 +141,10 @@ class Block(layers.Layer):
     """ Transformer block: communication followed by computation """
 
     def __init__(self, n_embd, n_head):
+        assert n_embd % n_head == 0
         super().__init__()
         head_size = n_embd // n_head
+
         self.sa = MultiHeadAttention(n_head, head_size)
         self.ffwd = FeedForward(n_embd)
         self.ln1 = layers.LayerNormalization(epsilon=1e-6)
@@ -150,10 +153,11 @@ class Block(layers.Layer):
         self.dropout_sa = layers.Dropout(dropout_rate)
         self.dropout_ffn = layers.Dropout(dropout_rate)
 
-    def call(self, x):
+
+    def call(self, x, training=False):
         # Pre-LN: normalization before MHA
-        x = x + self.dropout_sa(self.sa(self.ln1(x)))     # dropout output only MHA
-        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))  # dropout output only FFN
+        x = x + self.dropout_sa(self.sa(self.ln1(x)), training=training)     # dropout output only MHA
+        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)), training=training)  # dropout output only FFN
         return x
 
 
@@ -161,8 +165,9 @@ class BigramLanguageModel(keras.Model):
 
     def __init__(self, vocab_size):
         super().__init__()
+
         # each token directly reads off the logits for the next token from a lookup table
-        self.token_embedding_table = layers.Embedding(vocab_size, n_embd)
+        self.token_embedding_table    = layers.Embedding(vocab_size, n_embd)
         self.position_embedding_table = layers.Embedding(block_size, n_embd)
         self.blocks = tf.keras.Sequential([Block(n_embd, n_head=n_head) for _ in range(n_layer)])
         self.ln_f = layers.LayerNormalization(epsilon=1e-6) # final layer norm
