@@ -16,9 +16,11 @@ eval_iters = 200
 n_embd = 256
 n_head = 4
 n_layer = 4
-dropout_rate = 0.2
 
-tf.random.set_seed(1337)
+dropout_rate = 0.2
+random_seed = 2081
+
+tf.random.set_seed(random_seed)
 
 
 with open('input.txt', 'r', encoding='utf-8') as f:
@@ -51,10 +53,9 @@ def get_batch(split):
 class Head(layers.Layer):
     """ one head of self-attention """
 
-    def __init__(self, head_size, dropout_rate=0.2):
+    def __init__(self, head_size):
         super().__init__()
         self.head_size = head_size
-        self.dropout_rate = dropout_rate
 
     def build(self, input_shape):
         assert(block_size == input_shape[1])
@@ -64,7 +65,7 @@ class Head(layers.Layer):
 
         tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
         self.tril = tf.constant(tril)
-        self.dropout = layers.Dropout(self.dropout_rate)
+        self.dropout = layers.Dropout(dropout_rate)
 
 
     def call(self, x):
@@ -160,13 +161,12 @@ class Block(layers.Layer):
 
 class BigramLanguageLayer(layers.Layer):
 
-    def __init__(self, vocab_size, n_embd, n_head, n_block, dropout_rate=0.2):
+    def __init__(self, vocab_size, n_embd, n_head, n_block):
         super().__init__()
 
         self.vocab_size = vocab_size
         self.n_embd = n_embd
         self.n_head = n_head
-        self.dropout_rate = dropout_rate
         self.n_block = n_block
 
     def build(self, input_shape):
@@ -222,13 +222,13 @@ class BigramLanguageLayer(layers.Layer):
 
 
 class TransformerModel:
-    def __init__(self, vocab_size, n_embd, n_head, n_layer, block_size, dropout_rate, learning_rate, random_seed=2081):
+    def __init__(self, vocab_size, n_embd, n_head, n_layer, block_size, learning_rate):
         self.block_size = block_size
         self.vocab_size = vocab_size
 
         keras.utils.set_random_seed(random_seed)
         inputs = keras.Input((block_size,), dtype="int32")
-        outputs = BigramLanguageLayer(vocab_size, n_embd, n_head, n_layer, dropout_rate)(inputs)
+        outputs = BigramLanguageLayer(vocab_size, n_embd, n_head, n_layer)(inputs)
         self.model = keras.Model(inputs, outputs)
 
         # for var in self.model.trainable_variables:
@@ -264,7 +264,7 @@ class TransformerModel:
 def train_model():
     """ return TransformerModel """
 
-    model = TransformerModel(vocab_size, n_embd, n_head, n_layer, block_size, dropout_rate, learning_rate)
+    model = TransformerModel(vocab_size, n_embd, n_head, n_layer, block_size, learning_rate)
 
     for iter in tf.range(max_iters):
 
