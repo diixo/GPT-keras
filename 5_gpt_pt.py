@@ -8,7 +8,7 @@ block_size = 64 # maximum context length for predictions
 max_iters = 5000
 eval_interval = 1000
 learning_rate = 1e-3
-eval_iters = 200
+eval_iters = 100
 n_embd = 256
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 n_head = 4
@@ -143,8 +143,8 @@ class Block(nn.Module):
 
     def forward(self, x):
         # Pre-Layer Normalization (Pre-LN)
-        x = x + self.dropout_sa(self.sa(self.ln1(x)))       # Dropout после Self-Attention
-        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))    # Dropout после FFN
+        x = x + self.dropout_sa(self.sa(self.ln1(x)))       # Dropout after Self-Attention
+        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))    # Dropout after FFN
         return x
 
 
