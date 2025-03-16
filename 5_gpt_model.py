@@ -68,7 +68,7 @@ class Head(layers.Layer):
         self.dropout = layers.Dropout(dropout_rate)
 
 
-    def call(self, x, training=False):
+    def call(self, x):
         # input of size (batch, time-step, channels)
         # output of size (batch, time-step, head_size)
         B, T, C = x.shape
@@ -83,7 +83,7 @@ class Head(layers.Layer):
         wei = tf.matmul(q, k_T) * scale         # (B, T, head_size) @ (B, head_size, T) --> (B, T, T)
         wei = tf.where(self.tril[:T, :T] == 0, float('-inf'), wei)  # (B, T, T)
         wei = tf.nn.softmax(wei, axis=-1)       # (B, T, T)
-        wei = self.dropout(wei, training=training)
+        wei = self.dropout(wei)
 
         # perform the weighted aggregation of the values
         v = self.value(x)                       # (B, T, head_size)
@@ -104,9 +104,9 @@ class MultiHeadAttention(layers.Layer):
         self.dropout = layers.Dropout(dropout_rate)
 
 
-    def call(self, x, training=False):
-        out = tf.concat([h(x, training) for h in self.heads], axis=-1)
-        out = self.dropout(self.proj(out), training=training)
+    def call(self, x):
+        out = tf.concat([h(x) for h in self.heads], axis=-1)
+        out = self.dropout(self.proj(out))
 
         assert out.shape[1] == x.shape[1] and out.shape[2] == n_embd
         return out
@@ -126,8 +126,8 @@ class FeedForward(layers.Layer):
             layers.Dense(units=n_embd),    # (4*n_embd, n_embd)
         ])
 
-    def call(self, x, training=False):
-        out = self.net(x, training=training)   # B, T, n_embd
+    def call(self, x):
+        out = self.net(x)   # B, T, n_embd
         assert out.shape[1] == x.shape[1] and out.shape[2] == self.n_embd
         return out
 
@@ -149,10 +149,10 @@ class Block(layers.Layer):
         self.dropout_ffn = layers.Dropout(dropout_rate)
 
 
-    def call(self, x, training=False):
+    def call(self, x):
         # Pre-LN: normalization before MHA
-        x = x + self.dropout_sa(self.sa(self.ln1(x)), training=training)     # dropout output only MHA
-        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)), training=training)  # dropout output only FFN
+        x = x + self.dropout_sa(self.sa(self.ln1(x)))     # dropout output only MHA
+        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))  # dropout output only FFN
         return x
 
 
@@ -170,16 +170,16 @@ class BigramLanguageLayer(layers.Layer):
         self.lm_head = layers.Dense(units=vocab_size)  # (n_embd, vocab_size)
 
 
-    def call(self, idx, targets=None, training=False):
+    def call(self, idx, targets=None):
         B, T = idx.shape
-        assert(block_size == T)
-
+        
+        if targets: assert(block_size == T)
 
         # idx and targets are both (B=batch, T=time) tensor of integers
         tok_emb = self.token_embedding_table(idx)               # (B, T, C=n_embd)
         pos_emb = self.position_embedding_table(tf.range(T))    # (T, C=n_embd)
         x = tok_emb + pos_emb               # (B, T, C)
-        x = self.blocks(x, training)        # (B, T, C)
+        x = self.blocks(x)                  # (B, T, C)
         x = self.ln_f(x)                    # (B, T, C)
         logits = self.lm_head(x)            # (B, T, vocab_sz)
 
@@ -213,14 +213,14 @@ class TransformerModel:
 
     def estimate_loss(self, num_iters: int) -> dict:
         out = {}
-        self.model.trainable = False
+        #self.model.trainable = False
         for split in ["train", "val"]:
             losses = tf.zeros(num_iters, dtype=tf.float32)
             for k in range(num_iters):
                 loss = self.model.evaluate(*fetch_batch(split), verbose=0)
                 losses = tf.tensor_scatter_nd_add(losses, [[k]], [loss])
             out[split] = tf.reduce_mean(losses)
-        self.model.trainable = True
+        #self.model.trainable = True
         return out
 
 
@@ -256,7 +256,7 @@ def train_model():
     for iter in range(max_iters):
 
         Xb, Yb = fetch_batch("train")
-        model.train_on_batch(Xb, Yb)
+        loss = model.train_on_batch(Xb, Yb)
 
         if (iter % eval_interval == 0):
             losses = model.estimate_loss(eval_iters)
@@ -267,7 +267,7 @@ def train_model():
 
     # final estimation:
     losses = model.estimate_loss(eval_iters)
-    print(f"Finished, steps=({iter+1}): train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
+    print(f"Finished, steps={iter+1}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
     return model
 
 
