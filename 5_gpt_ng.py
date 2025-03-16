@@ -64,6 +64,62 @@ def estimate_loss(model):
     return out
 
 
+class CausalSelfAttention(layers.Layer):
+    """
+    A vanilla multi-head masked self-attention layer with a projection at the end.
+    It is possible to use torch.nn.MultiheadAttention here but I am including an
+    explicit implementation here to show that there is nothing too scary here.
+    """
+
+    def __init__(self, config):
+        super().__init__()
+        assert n_embd % n_head == 0
+        # key, query, value projections for all heads, but in a batch
+        self.c_attn = layers.Dense(n_embd, 3 * n_embd, bias=False) # (n_embd, 3 * n_embd)
+        # output projection
+        self.c_proj = layers.Dense(n_embd, n_embd, bias=False)     # (n_embd, n_embd)
+        # regularization
+        self.attn_dropout = layers.Dropout(dropout_rate)
+        self.resid_dropout = layers.Dropout(dropout_rate)
+        self.n_head = n_head
+        self.n_embd = n_embd
+
+
+    def call(self, x):
+        B, T, C = x.shape   # B = batch size, T = tokens sequence length, C = embedding dimensionality (n_embd)
+
+        # calculate q=query, k=key, v=values for all heads in batch and move head forward to be the batch dim
+
+        q, k, v = tf.split(self.c_attn(x), num_or_size_splits=3, axis=2)
+        # c_attn(x) transform (B, T, n_embd) --> (B, T, 3*n_embd)
+        # q, k, v <-- (B, T, 3*n_embd).split by (n_embd, dim=2)
+        # q, k, v = (B, T, n_embd)
+
+        # transform q,k,v=(B, T, n_embd) -->
+        q = tf.reshape(q, (B, T, self.n_head, C // self.n_head))    # (B, T, n_head, head_size)
+        q = tf.transpose(q, perm=[0, 2, 1, 3])                      # (B, n_head, T, head_size)
+
+        k = tf.reshape(k, (B, T, self.n_head, C // self.n_head))    # (B, T, n_head, head_size)
+        k = tf.transpose(k, perm=[0, 2, 1, 3])                      # (B, n_head, T, head_size)
+
+        v = tf.reshape(v, (B, T, self.n_head, C // self.n_head))    # (B, T, n_head, head_size)
+        v = tf.transpose(v, perm=[0, 2, 1, 3])                      # (B, n_head, T, head_size)
+
+        # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
+        """
+        att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
+        att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
+        att = F.softmax(att, dim=-1)
+        att = self.attn_dropout(att)
+        y = att @ v # (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
+        y = y.transpose(1, 2).contiguous().view(B, T, C) # re-assemble all head outputs side by side
+
+        # output projection
+        y = self.resid_dropout(self.c_proj(y))
+        return y
+        """
+
+
 class Head(layers.Layer):
     """ one head of self-attention """
 
