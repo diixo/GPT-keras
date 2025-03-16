@@ -10,7 +10,7 @@ block_size = 64 # maximum context length for predictions
 
 max_iters = 5000
 eval_interval = 1000
-learning_rate = 1e-3
+learning_rate = 5e-4
 eval_iters = 100
 
 n_embd = 256
@@ -72,7 +72,7 @@ class Head(layers.Layer):
         # input of size (batch, time-step, channels)
         # output of size (batch, time-step, head_size)
         B, T, C = x.shape
-        assert(block_size == T)
+        # assert(block_size == T) # text_generation
 
         k = self.key(x)                         # (B, T, head_size)
         q = self.query(x)                       # (B, T, head_size)
@@ -258,12 +258,12 @@ def train_model():
         Xb, Yb = fetch_batch("train")
         loss = model.train_on_batch(Xb, Yb)
 
-        if (iter % eval_interval == 0):
-            losses = model.estimate_loss(eval_iters)
-            print(f"...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
-        else:
-            if (iter % 100 == 0):
-                print(f"...on {iter}(th) train_loss={loss:.4f}")
+        # if (iter % eval_interval == 0):
+        #     losses = model.estimate_loss(eval_iters)
+        #     print(f"...on {iter}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
+        # else:
+        if (iter % 100 == 0):
+            print(f"...on {iter}(th) train_loss={loss:.4f}")
 
     # final estimation:
     losses = model.estimate_loss(eval_iters)
