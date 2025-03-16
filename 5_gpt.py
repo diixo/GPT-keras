@@ -84,7 +84,7 @@ class Head(layers.Layer):
         # input of size (batch, time-step, channels)
         # output of size (batch, time-step, head_size)
         B, T, C = x.shape   # B = batch size, T = tokens sequence length, C = embedding dimensionality (n_embd)
-        assert(block_size == T)
+        #assert(block_size == T)    # TODO: text_generation
 
         k = self.key(x)                         # (B, T, head_size)
         q = self.query(x)                       # (B, T, head_size)
@@ -260,5 +260,3 @@ train_model(model)
 generated_text = decode(model.generate_text(max_new_tokens=500))
 print(generated_text)
 
-loss = model.evaluate(*fetch_batch("train"), verbose=0)
-print(f"model.evaluate.loss={loss:.6f}")
