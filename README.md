@@ -26,7 +26,7 @@ Andrej Karpathy's invaluable resource, guiding the process of coding GPT from th
 
 - **4_gpt.py** (**4_gpt_pt.py**): pre-layer block normalization
 
-- **5_gpt.py** (**5_gpt_pt.py**): final implementation
+- **5_gpt.py** (**5_gpt_pt.py**): final implementation (on 4500(th) train_loss=1.276784)
 
 - **5_gpt_model.py**: final adaptation to keras-model (from **5_gpt.py**)
 

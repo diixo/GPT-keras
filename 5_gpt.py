@@ -7,9 +7,9 @@ import math
 batch_size = 32 # amount independent sequences will we process in parallel
 block_size = 64 # maximum context length for predictions
 max_iters = 5000
-eval_interval = 1000
+#eval_interval = 1000
 learning_rate = 5e-4
-eval_iters = 200
+eval_iters = 100
 
 n_embd = 256
 n_head = 4
@@ -150,10 +150,10 @@ class Block(layers.Layer):
         super().__init__()
         head_size = n_embd // n_head
 
-        self.sa = MultiHeadAttention(n_head, head_size)
-        self.ffwd = FeedForward(n_embd)
         self.ln1 = layers.LayerNormalization(epsilon=1e-6)
+        self.sa = MultiHeadAttention(n_head, head_size)
         self.ln2 = layers.LayerNormalization(epsilon=1e-6)
+        self.ffwd = FeedForward(n_embd)
 
         self.dropout_sa = layers.Dropout(dropout_rate)
         self.dropout_ffn = layers.Dropout(dropout_rate)
