@@ -1,26 +1,28 @@
 import tensorflow as tf
 from tensorflow import keras
 from keras import layers
+import math
 
-
-# Hyperparameters
+# ---------- data-parameters ----------
 batch_size = 32 # amount independent sequences will we process in parallel
 block_size = 64 # maximum context length for predictions
 max_iters = 5000
 eval_interval = 1000
-learning_rate = 1e-3
+learning_rate = 5e-4
 eval_iters = 200
 
 n_embd = 256
 n_head = 4
 n_layer = 4
 
+# ---------- static-parameters ----------
 dropout_rate = 0.2
 random_seed = 2081
 
+
 tf.random.set_seed(random_seed)
 
-
+# https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt
 with open('input.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
@@ -40,11 +42,11 @@ val_data = data[n:]
 
 
 # data loading
-def get_batch(split):
-    data_split = train_data if split == 'train' else val_data
+def fetch_batch(split):
+    data_split = train_data if split == "train" else val_data
     ix = tf.random.uniform(shape=(batch_size,), maxval=len(data_split) - block_size, dtype=tf.int32)
-    x = tf.stack([data_split[i:i+block_size] for i in ix])
-    y = tf.stack([data_split[i+1:i+block_size+1] for i in ix])
+    x = tf.stack([data_split[i: i + block_size] for i in ix])
+    y = tf.stack([data_split[i+1: i + block_size+1] for i in ix])
     return x, y
 
 
@@ -54,7 +56,7 @@ def estimate_loss(model):
     for split in ['train', 'val']:
         losses = tf.zeros(eval_iters, dtype=tf.float32)
         for k in range(eval_iters):
-            X, Y = get_batch(split)
+            X, Y = fetch_batch(split)
             logits, loss = model(X, Y)
             losses = tf.tensor_scatter_nd_add(losses, [[k]], [loss])
         out[split] = tf.reduce_mean(losses)
@@ -67,10 +69,11 @@ class Head(layers.Layer):
 
     def __init__(self, head_size):
         super().__init__()
-        self.key = layers.Dense(units=head_size, use_bias=False)
-        self.query = layers.Dense(units=head_size, use_bias=False)
-        self.value = layers.Dense(units=head_size, use_bias=False)
         self.head_size = head_size
+
+        self.key   = layers.Dense(units=head_size, use_bias=False) # (n_embd, head_size)
+        self.query = layers.Dense(units=head_size, use_bias=False) # (n_embd, head_size)
+        self.value = layers.Dense(units=head_size, use_bias=False) # (n_embd, head_size)
 
         tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
         self.tril = tf.constant(tril)
@@ -80,7 +83,9 @@ class Head(layers.Layer):
     def call(self, x):
         # input of size (batch, time-step, channels)
         # output of size (batch, time-step, head_size)
-        B, T, C = x.shape
+        B, T, C = x.shape   # B = batch size, T = tokens sequence length, C = embedding dimensionality (n_embd)
+        assert(block_size == T)
+
         k = self.key(x)                         # (B, T, head_size)
         q = self.query(x)                       # (B, T, head_size)
         k_T = tf.transpose(k, perm=[0, 2, 1])   # (B, T, head_size) --> (B, head_size, T)
@@ -169,14 +174,20 @@ class BigramLanguageModel(keras.Model):
         # each token directly reads off the logits for the next token from a lookup table
         self.token_embedding_table    = layers.Embedding(vocab_size, n_embd)
         self.position_embedding_table = layers.Embedding(block_size, n_embd)
-        self.blocks = tf.keras.Sequential([Block(n_embd, n_head=n_head) for _ in range(n_layer)])
+        self.blocks = keras.Sequential(
+            [Block(n_embd, n_head) for _ in range(n_layer)])
         self.ln_f = layers.LayerNormalization(epsilon=1e-6) # final layer norm
-        self.lm_head = layers.Dense(input_shape=(n_embd,), units=vocab_size)
+        
+        bias_initializer = tf.keras.initializers.RandomNormal(
+            mean=0.0,
+            stddev=0.02 / math.sqrt(2 * n_layer))
+        self.lm_head = layers.Dense(input_shape=(n_embd,), units=vocab_size, bias_initializer=bias_initializer)
 
 
     def call(self, idx, targets=None):
         B, T = idx.shape
-        assert(block_size == T)
+
+        if targets is not None: assert(block_size == T)
 
         # idx and targets are both (B=batch, T=time) tensor of integers
         tok_emb = self.token_embedding_table(idx)               # (B, T, C=n_embd)
@@ -196,7 +207,9 @@ class BigramLanguageModel(keras.Model):
         return logits, loss
 
 
-    def generate(self, idx, max_new_tokens):
+    def generate_text(self, max_new_tokens: int):
+        idx = tf.zeros((1, 1), dtype=tf.int64)
+
         # idx is (B, T) array of indices in the current context
         for _ in tf.range(max_new_tokens):
             # crop idx to the last block_size token
@@ -211,51 +224,41 @@ class BigramLanguageModel(keras.Model):
             idx_next = tf.random.categorical(tf.math.log(probs), num_samples=1, dtype=tf.int64) # (B, 1)
             # concatenate to stream of integer indices
             idx = tf.concat([idx, idx_next], axis=1)    # (B, T+1)
-        return idx
+        return idx.numpy()[0]
 
 
 def train_model(model: BigramLanguageModel):
 
     optimizer = tf.optimizers.AdamW(
         learning_rate=learning_rate,
-        weight_decay=1e-2,
-        epsilon=1e-7)
+        weight_decay=5e-3,
+        epsilon=1e-8)
 
-
-    for iter in tf.range(max_iters):
-
-        Xb, Yb = get_batch("train")
-
+    for iter in range(max_iters):
+        loss = 0
         with tf.GradientTape() as tape:
             # forward pass
-            logits, loss = model(Xb, Yb)
+            logits, loss = model(*fetch_batch("train"))
 
         # backward pass
         gradients = tape.gradient(loss, model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-        if iter % eval_interval == 0:
-            losses = estimate_loss(model)
-            if not model.trainable_variables:
-                print(f"!!!Warning: trainable_variables is EMPTY on:{iter.numpy()}")
-            else:
-                print(f"...on {iter.numpy()}(th): train_loss({losses['train']:.4f}), val_loss({losses['val']:.4f})")
-        else:
-            if (iter % 100 == 0) and (iter > 0):
-                print(f"...on {iter}(th) epoch...")
+        if iter % 100 == 0:
+            print(f"...on {iter}(th) train_loss={loss:.6f}")
 
-
-    
-    total_params = sum(tf.size(param).numpy() for param in model.trainable_variables)
-    # final estimation:
+    model.summary()
+    # Final estimation:
     losses = estimate_loss(model)
-    print(f"Final step {iter.numpy()}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}. Model.sz={total_params}")
+    print(f"Finished, steps={iter+1}: train_loss={losses['train']:.4f}, val_loss={losses['val']:.4f}")
 
 
 model = BigramLanguageModel(vocab_size)
 train_model(model)
 
 # Generate text from the model
-idx = tf.zeros((1, 1), dtype=tf.int64)  # (B, T)
-generated_text = decode(model.generate(idx, max_new_tokens=500).numpy()[0])
+generated_text = decode(model.generate_text(max_new_tokens=500))
 print(generated_text)
+
+loss = model.evaluate(*fetch_batch("train"), verbose=0)
+print(f"model.evaluate.loss={loss:.6f}")
