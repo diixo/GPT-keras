@@ -2,7 +2,6 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 import math
-from keras import ops
 
 # ---------- data-parameters ----------
 batch_size = 32 # amount independent sequences will we process in parallel
@@ -72,15 +71,15 @@ def causal_attention_mask(batch_size, n_dest, n_src, dtype):
     This prevents flow of information from future tokens to current token.
     1's in the lower triangle, counting from the lower right corner.
     """
-    i = ops.arange(n_dest)[:, None]
-    j = ops.arange(n_src)
+    i = tf.range(n_dest)[:, None]
+    j = tf.range(n_src)
     m = i >= j - n_src + n_dest
-    mask = ops.cast(m, dtype)
-    mask = ops.reshape(mask, [1, n_dest, n_src])
-    mult = ops.concatenate(
-        [ops.expand_dims(batch_size, -1), ops.convert_to_tensor([1, 1])], 0
+    mask = tf.cast(m, dtype)
+    mask = tf.reshape(mask, [1, n_dest, n_src])
+    mult = tf.concat(
+        [tf.expand_dims(batch_size, -1), tf.convert_to_tensor([1, 1])], 0
     )
-    return ops.tile(mask, mult)
+    return tf.tile(mask, mult)
 
 
 class CausalSelfAttention(layers.Layer):
