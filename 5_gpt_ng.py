@@ -6,13 +6,13 @@ from keras import ops
 
 # ---------- data-parameters ----------
 batch_size = 32 # amount independent sequences will we process in parallel
-block_size = 64 # maximum context length for predictions
+block_size = 80 # maximum context length for predictions
 max_iters = 5000
 #eval_interval = 1000
 learning_rate = 5e-4
 eval_iters = 100
 
-n_embd = 256
+n_embd = 180
 n_head = 4
 n_layer = 4
 
@@ -94,9 +94,9 @@ class CausalSelfAttention(layers.Layer):
         super().__init__()
         assert n_embd % n_head == 0
         # key, query, value projections for all heads, but in a batch
-        self.c_attn = layers.Dense(n_embd, 3 * n_embd, bias=False) # (n_embd, 3 * n_embd)
+        self.c_attn = layers.Dense(n_embd, 3 * n_embd, use_bias=False) # (n_embd, 3 * n_embd)
         # output projection
-        self.c_proj = layers.Dense(n_embd, n_embd, bias=False)     # (n_embd, n_embd)
+        self.c_proj = layers.Dense(n_embd, n_embd, use_bias=False)     # (n_embd, n_embd)
         # regularization
         self.attn_dropout = layers.Dropout(dropout_rate)
         self.resid_dropout = layers.Dropout(dropout_rate)
