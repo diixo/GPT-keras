@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 import math
+from keras import ops
 
 # ---------- data-parameters ----------
 batch_size = 32 # amount independent sequences will we process in parallel
@@ -64,6 +65,24 @@ def estimate_loss(model):
     return out
 
 
+
+def causal_attention_mask(batch_size, n_dest, n_src, dtype):
+    """
+    Mask the upper half of the dot product matrix in self attention.
+    This prevents flow of information from future tokens to current token.
+    1's in the lower triangle, counting from the lower right corner.
+    """
+    i = ops.arange(n_dest)[:, None]
+    j = ops.arange(n_src)
+    m = i >= j - n_src + n_dest
+    mask = ops.cast(m, dtype)
+    mask = ops.reshape(mask, [1, n_dest, n_src])
+    mult = ops.concatenate(
+        [ops.expand_dims(batch_size, -1), ops.convert_to_tensor([1, 1])], 0
+    )
+    return ops.tile(mask, mult)
+
+
 class CausalSelfAttention(layers.Layer):
     """
     A vanilla multi-head masked self-attention layer with a projection at the end.
@@ -71,7 +90,7 @@ class CausalSelfAttention(layers.Layer):
     explicit implementation here to show that there is nothing too scary here.
     """
 
-    def __init__(self, config):
+    def __init__(self, n_embd, n_head):
         super().__init__()
         assert n_embd % n_head == 0
         # key, query, value projections for all heads, but in a batch
@@ -83,6 +102,9 @@ class CausalSelfAttention(layers.Layer):
         self.resid_dropout = layers.Dropout(dropout_rate)
         self.n_head = n_head
         self.n_embd = n_embd
+
+        tril = tf.linalg.band_part(tf.ones((1, 1, block_size, block_size)), -1, 0)
+        self.tril = tf.constant(tril)
 
 
     def call(self, x):
@@ -106,18 +128,34 @@ class CausalSelfAttention(layers.Layer):
         v = tf.transpose(v, perm=[0, 2, 1, 3])                      # (B, n_head, T, head_size)
 
         # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
+        ########################################
         """
-        att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
-        att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
-        att = F.softmax(att, dim=-1)
-        att = self.attn_dropout(att)
-        y = att @ v # (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
-        y = y.transpose(1, 2).contiguous().view(B, T, C) # re-assemble all head outputs side by side
+        q: (B, nh, T, hs)
+        k: (B, nh, T, hs)
+        v: (B, nh, T, hs)
+        tril: (1, 1, T, T)
+        """
 
-        # output projection
-        y = self.resid_dropout(self.c_proj(y))
-        return y
-        """
+        # (B, nh, T, hs) --> (B, nh, hs, T)
+        k_T = tf.transpose(k, perm=[0, 1, 3, 2])
+
+        d_k = tf.cast(tf.shape(k_T)[-1], dtype=tf.float32)
+        scale = tf.math.rsqrt(d_k)
+
+        att = tf.matmul(q, k_T) * scale  # (B, nh, T, T)
+        #att = tf.where(self.tril[:T, :T] == 0, tf.fill(tf.shape(att), float('-inf')), att)
+        att = tf.where(self.tril == 0, tf.fill(tf.shape(att), float('-inf')), att)
+        att = tf.nn.softmax(att, axis=-1)
+        att = self.attn_dropout(att)
+        y = tf.matmul(att, v)   # (B, nh, T, T) x (B, nh, T, hs) --> (B, nh, T, hs)
+
+        # (B, nh, T, hs) --> (B, T, nh, hs)
+        y = tf.transpose(y, perm=[0, 2, 1, 3])
+
+        # concat all heads --> (B, T, C), for C = nh * hs
+        y = tf.reshape(y, [tf.shape(y)[0], tf.shape(y)[1], -1])
+
+        return self.resid_dropout(self.c_proj(y))
 
 
 class Head(layers.Layer):
@@ -188,8 +226,8 @@ class FeedForward(layers.Layer):
         self.net = tf.keras.Sequential([
             layers.Dense(units=4*n_embd),  # (n_embd, 4*n_embd)
             layers.ReLU(),
-            layers.Dropout(dropout_rate),
             layers.Dense(units=n_embd),    # (4*n_embd, n_embd)
+            layers.Dropout(dropout_rate),
         ])
 
     def call(self, x):
@@ -208,6 +246,7 @@ class Block(layers.Layer):
 
         self.ln1 = layers.LayerNormalization(epsilon=1e-6)
         self.sa = MultiHeadAttention(n_head, head_size)
+        #self.csa = CausalSelfAttention(n_embd, n_head)
         self.ln2 = layers.LayerNormalization(epsilon=1e-6)
         self.ffwd = FeedForward(n_embd)
 
