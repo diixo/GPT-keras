@@ -5,13 +5,13 @@ import math
 
 # ---------- data-parameters ----------
 batch_size = 32 # amount independent sequences will we process in parallel
-block_size = 80 # maximum context length for predictions
+block_size = 64 # maximum context length for predictions
 max_iters = 5000
 #eval_interval = 1000
 learning_rate = 5e-4
 eval_iters = 100
 
-n_embd = 180
+n_embd = 256
 n_head = 4
 n_layer = 4
 
@@ -80,6 +80,19 @@ def causal_attention_mask(batch_size, n_dest, n_src, dtype):
         [tf.expand_dims(batch_size, -1), tf.convert_to_tensor([1, 1])], 0
     )
     return tf.tile(mask, mult)
+
+
+class GELU(layers.Layer):
+    """
+    Implementation of the GELU activation function currently in Google BERT repo (identical to OpenAI GPT).
+    Reference: Gaussian Error Linear Units (GELU) paper: https://arxiv.org/abs/1606.08415
+    """
+    def __init__(self):
+        super().__init__()
+
+    def call(self, x):
+        return 0.5 * x * (1 + tf.tanh(
+            math.sqrt(2 / math.pi) * (x + 0.044715 * tf.pow(x, 3))))
 
 
 class CausalSelfAttention(layers.Layer):
@@ -168,7 +181,7 @@ class FeedForward(layers.Layer):
 
         self.net = tf.keras.Sequential([
             layers.Dense(units=4*n_embd),  # (n_embd, 4*n_embd)
-            layers.ReLU(),
+            GELU(),
             layers.Dense(units=n_embd),    # (4*n_embd, n_embd)
             layers.Dropout(dropout_rate),
         ])
