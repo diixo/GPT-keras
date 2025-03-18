@@ -159,64 +159,6 @@ class CausalSelfAttention(layers.Layer):
         return y
 
 
-class Head(layers.Layer):
-    """ one head of self-attention """
-
-    def __init__(self, head_size):
-        super().__init__()
-        self.head_size = head_size
-
-        self.key   = layers.Dense(units=head_size, use_bias=False) # (n_embd, head_size)
-        self.query = layers.Dense(units=head_size, use_bias=False) # (n_embd, head_size)
-        self.value = layers.Dense(units=head_size, use_bias=False) # (n_embd, head_size)
-
-        tril = tf.linalg.band_part(tf.ones((block_size, block_size)), -1, 0)
-        self.tril = tf.constant(tril)
-        self.dropout = layers.Dropout(dropout_rate)
-
-
-    def call(self, x):
-        # input of size (batch, time-step, channels)
-        # output of size (batch, time-step, head_size)
-        B, T, C = x.shape   # B = batch size, T = tokens sequence length, C = embedding dimensionality (n_embd)
-        #assert(block_size == T)    # TODO: text_generation
-
-        k = self.key(x)                         # (B, T, head_size)
-        q = self.query(x)                       # (B, T, head_size)
-        k_T = tf.transpose(k, perm=[0, 2, 1])   # (B, T, head_size) --> (B, head_size, T)
-
-        # compute attention scores ("affinities")
-        scale = tf.math.rsqrt(tf.cast(k.shape[-1], tf.float32))
-        wei = tf.matmul(q, k_T) * scale         # (B, T, head_size) @ (B, head_size, T) --> (B, T, T)
-        wei = tf.where(self.tril[:T, :T] == 0, float('-inf'), wei)  # (B, T, T)
-        wei = tf.nn.softmax(wei, axis=-1)       # (B, T, T)
-        wei = self.dropout(wei)
-
-        # perform the weighted aggregation of the values
-        v = self.value(x)                       # (B, T, head_size)
-        out = tf.matmul(wei, v)                 # (B, T, T) @ (B, T, head_size) --> (B, T, head_size)
-
-        assert out.shape[1] == x.shape[1] and out.shape[2] == self.head_size
-        return out
-
-
-class MultiHeadAttention(layers.Layer):
-    """ multiple heads of self-attention in parallel """
-
-    def __init__(self, num_heads, head_size):
-        super().__init__()
-        self.heads = [Head(head_size) for _ in range(num_heads)]
-        self.proj = layers.Dense(units=n_embd)  # head_size * num_heads, n_embd
-        self.dropout = layers.Dropout(dropout_rate)
-
-    def call(self, x):
-        out = tf.concat([h(x) for h in self.heads], axis=-1)
-        out = self.dropout(self.proj(out))
-
-        assert out.shape[1] == x.shape[1] and out.shape[2] == n_embd
-        return out
-
-
 class FeedForward(layers.Layer):
     """ a simple linear layer followed by a non-linearity """
 
@@ -243,10 +185,8 @@ class Block(layers.Layer):
     def __init__(self, n_embd, n_head):
         assert n_embd % n_head == 0
         super().__init__()
-        head_size = n_embd // n_head
 
         self.ln1 = layers.LayerNormalization(epsilon=1e-6)
-        #self.sa = MultiHeadAttention(n_head, head_size)
         self.csa = CausalSelfAttention(n_embd, n_head)
         self.ln2 = layers.LayerNormalization(epsilon=1e-6)
         self.ffwd = FeedForward(n_embd)
