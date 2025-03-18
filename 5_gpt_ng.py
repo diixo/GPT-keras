@@ -7,8 +7,7 @@ import math
 batch_size = 32 # amount independent sequences will we process in parallel
 block_size = 64 # maximum context length for predictions
 max_iters = 5000
-#eval_interval = 1000
-learning_rate = 5e-4
+learning_rate = 3e-4
 eval_iters = 100
 
 n_embd = 256
