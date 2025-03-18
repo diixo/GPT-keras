@@ -51,6 +51,14 @@ The code in this repository is thoroughly explained in the accompanying code, th
 
 * https://github.com/cloudxlab/GPT-from-scratch
 
+* https://github.com/kamalkraj/minGPT-TF
+
+* https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_tf_gpt2.py
+
+* https://github.com/legacyai/tf-transformers/blob/main/src/tf_transformers/models/gpt2/gpt2.py
+
+* https://github.com/EleutherAI/gpt-neo/tree/master
+
 * https://arxiv.org/abs/1512.03385: Deep Residual Learning for Image Recognition
 
 * https://arxiv.org/abs/1606.08415: Gaussian Error Linear Unit (GELU)
