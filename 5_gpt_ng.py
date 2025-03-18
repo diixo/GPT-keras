@@ -151,12 +151,12 @@ class CausalSelfAttention(layers.Layer):
         # (B, nh, T, hs) --> (B, nh, hs, T)
         k_T = tf.transpose(k, perm=[0, 1, 3, 2])
 
-        d_k = tf.cast(tf.shape(k_T)[-1], dtype=tf.float32)
+        d_k = tf.cast(k_T.shape[-1], dtype=tf.float32)
         scale = tf.math.rsqrt(d_k)
 
         att = tf.matmul(q, k_T) * scale  # (B, nh, T, T)
-        #att = tf.where(self.tril[:T, :T] == 0, tf.fill(tf.shape(att), float('-inf')), att)
-        att = tf.where(self.tril == 0, tf.fill(tf.shape(att), float('-inf')), att)
+        #att = tf.where(self.tril[:T, :T] == 0, float('-inf'), att)
+        att = tf.where(self.tril == 0, float('-inf'), att)
         att = tf.nn.softmax(att, axis=-1)
         att = self.attn_dropout(att)
         y = tf.matmul(att, v)   # (B, nh, T, T) x (B, nh, T, hs) --> (B, nh, T, hs)
@@ -165,7 +165,7 @@ class CausalSelfAttention(layers.Layer):
         y = tf.transpose(y, perm=[0, 2, 1, 3])
 
         # concat all heads --> (B, T, C), for C = nh * hs
-        y = tf.reshape(y, [tf.shape(y)[0], tf.shape(y)[1], -1])
+        y = tf.reshape(y, [y.shape[0], y.shape[1], -1])
         y = self.resid_dropout(self.c_proj(y))
 
         assert(B == y.shape[0] and T == y.shape[1] and C == y.shape[2])
