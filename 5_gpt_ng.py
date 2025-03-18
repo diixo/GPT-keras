@@ -63,32 +63,11 @@ def estimate_loss(model):
     return out
 
 
-
-def causal_attention_mask(batch_size, n_dest, n_src, dtype):
-    """
-    Mask the upper half of the dot product matrix in self attention.
-    This prevents flow of information from future tokens to current token.
-    1's in the lower triangle, counting from the lower right corner.
-    """
-    i = tf.range(n_dest)[:, None]
-    j = tf.range(n_src)
-    m = i >= j - n_src + n_dest
-    mask = tf.cast(m, dtype)
-    mask = tf.reshape(mask, [1, n_dest, n_src])
-    mult = tf.concat(
-        [tf.expand_dims(batch_size, -1), tf.convert_to_tensor([1, 1])], 0
-    )
-    return tf.tile(mask, mult)
-
-
 class GELU(layers.Layer):
     """
     Implementation of the GELU activation function currently in Google BERT repo (identical to OpenAI GPT).
     Reference: Gaussian Error Linear Units (GELU) paper: https://arxiv.org/abs/1606.08415
     """
-    def __init__(self):
-        super().__init__()
-
     def call(self, x):
         return 0.5 * x * (1 + tf.tanh(
             math.sqrt(2 / math.pi) * (x + 0.044715 * tf.pow(x, 3))))
