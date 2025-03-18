@@ -93,9 +93,9 @@ class CausalSelfAttention(layers.Layer):
         super().__init__()
         assert n_embd % n_head == 0
         # key, query, value projections for all heads, but in a batch
-        self.c_attn = layers.Dense(n_embd, 3 * n_embd, use_bias=False) # (n_embd, 3 * n_embd)
+        self.c_attn = layers.Dense(units=3*n_embd, use_bias=False)  # (n_embd, 3*n_embd)
         # output projection
-        self.c_proj = layers.Dense(n_embd, n_embd, use_bias=False)     # (n_embd, n_embd)
+        self.c_proj = layers.Dense(units=n_embd, use_bias=False)    # (n_embd, n_embd)
         # regularization
         self.attn_dropout = layers.Dropout(dropout_rate)
         self.resid_dropout = layers.Dropout(dropout_rate)
@@ -126,8 +126,8 @@ class CausalSelfAttention(layers.Layer):
         v = tf.reshape(v, (B, T, self.n_head, C // self.n_head))    # (B, T, n_head, head_size)
         v = tf.transpose(v, perm=[0, 2, 1, 3])                      # (B, n_head, T, head_size)
 
-        # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
         ########################################
+        # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
         """
         q: (B, nh, T, hs)
         k: (B, nh, T, hs)
@@ -153,8 +153,10 @@ class CausalSelfAttention(layers.Layer):
 
         # concat all heads --> (B, T, C), for C = nh * hs
         y = tf.reshape(y, [tf.shape(y)[0], tf.shape(y)[1], -1])
+        y = self.resid_dropout(self.c_proj(y))
 
-        return self.resid_dropout(self.c_proj(y))
+        assert(B == y.shape[0] and T == y.shape[1] and C == y.shape[2])
+        return y
 
 
 class Head(layers.Layer):
@@ -244,8 +246,8 @@ class Block(layers.Layer):
         head_size = n_embd // n_head
 
         self.ln1 = layers.LayerNormalization(epsilon=1e-6)
-        self.sa = MultiHeadAttention(n_head, head_size)
-        #self.csa = CausalSelfAttention(n_embd, n_head)
+        #self.sa = MultiHeadAttention(n_head, head_size)
+        self.csa = CausalSelfAttention(n_embd, n_head)
         self.ln2 = layers.LayerNormalization(epsilon=1e-6)
         self.ffwd = FeedForward(n_embd)
 
@@ -253,10 +255,10 @@ class Block(layers.Layer):
         self.dropout_ffn = layers.Dropout(dropout_rate)
 
 
-    def call(self, x, training=False):
+    def call(self, x):
         # Pre-LN: normalization before MHA
-        x = x + self.dropout_sa(self.sa(self.ln1(x)), training=training)     # dropout output only MHA
-        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)), training=training)  # dropout output only FFN
+        x = x + self.dropout_sa(self.csa(self.ln1(x)))      # dropout output only MHA
+        x = x + self.dropout_ffn(self.ffwd(self.ln2(x)))    # dropout output only FFN
         return x
 
 
