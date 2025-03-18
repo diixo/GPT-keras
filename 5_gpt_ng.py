@@ -258,8 +258,10 @@ class BigramLanguageModel(keras.Model):
         return logits, loss
 
 
-    def generate_text(self, max_new_tokens: int):
-        idx = tf.zeros((1, 1), dtype=tf.int64)
+    def generate_text(self, prompt: str, max_new_tokens: int, do_sample=False):
+        idx = tf.expand_dims(
+            tf.convert_to_tensor(encode(prompt), dtype=tf.int64),
+            axis=0)
 
         # idx is (B, T) array of indices in the current context
         for _ in tf.range(max_new_tokens):
@@ -271,10 +273,16 @@ class BigramLanguageModel(keras.Model):
             logits = logits[:, -1, :]       # becomes (B, C)
             # apply softmax to get max probability
             probs = tf.nn.softmax(logits, axis=-1)  # (B, C)
+
             # get next char-index
-            idx_next = tf.random.categorical(tf.math.log(probs), num_samples=1, dtype=tf.int64) # (B, 1)
+            if do_sample:
+                idx_next = tf.random.categorical(tf.math.log(probs), num_samples=1, dtype=tf.int64) # (B, 1)
+            else:
+                idx_next = tf.argmax(probs, axis=-1, output_type=tf.int64)  # [1]
+                idx_next = idx_next[:, tf.newaxis]                          # --> [1, 1]
+
             # concatenate to stream of integer indices
-            idx = tf.concat([idx, idx_next], axis=1)    # (B, T+1)
+            idx = tf.concat([idx, idx_next], axis=1)    # (1,T) + (1,1) --> (1,T+1)
         return idx.numpy()[0]
 
 
@@ -308,6 +316,6 @@ model = BigramLanguageModel(vocab_size)
 train_model(model)
 
 # Generate text from the model
-generated_text = decode(model.generate_text(max_new_tokens=500))
+generated_text = decode(model.generate_text(prompt="good", max_new_tokens=500, do_sample=False))
 print(generated_text)
 
