@@ -278,6 +278,7 @@ class BigramLanguageModel(keras.Model):
             mean=0.0,
             stddev=0.02 / math.sqrt(2 * n_layer))
         self.lm_head = layers.Dense(input_shape=(n_embd,), units=vocab_size, bias_initializer=bias_initializer)
+        self.drop = layers.Dropout(dropout_rate)
 
 
     def call(self, idx, targets=None):
@@ -289,6 +290,7 @@ class BigramLanguageModel(keras.Model):
         tok_emb = self.token_embedding_table(idx)               # (B, T, C=n_embd)
         pos_emb = self.position_embedding_table(tf.range(T))    # (T, C=n_embd)
         x = tok_emb + pos_emb               # (B, T, C)
+        x = self.drop(x)                    # (B, T, C)
         x = self.blocks(x)                  # (B, T, C)
         x = self.ln_f(x)                    # (B, T, C)
         logits = self.lm_head(x)            # (B, T, vocab_sz)
