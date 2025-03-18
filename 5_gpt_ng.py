@@ -171,6 +171,25 @@ class FeedForward(layers.Layer):
         return out
 
 
+class FeedForwardConv(layers.Layer):
+    def __init__(self, n_embd: int):
+        super().__init__()
+        self.n_embd = n_embd
+        self.net = keras.Sequential([
+            layers.Conv1D(filters=4, kernel_size=1, activation=self.gelu),
+            layers.Conv1D(filters=self.n_embd, kernel_size=1),
+            layers.Dropout(dropout_rate)
+        ])
+
+    def gelu(self, x):
+        return 0.5 * x * (1 + tf.tanh(math.sqrt(2 / math.pi) * (x + 0.044715 * tf.pow(x, 3))))
+
+    def call(self, x, *args, **kwargs):
+        out = self.net(x)   # B, T, n_embd
+        assert out.shape[1] == x.shape[1] and out.shape[2] == self.n_embd
+        return out
+
+
 class Block(layers.Layer):
     """ Transformer block: communication followed by computation """
 
@@ -182,6 +201,7 @@ class Block(layers.Layer):
         self.csa = CausalSelfAttention(n_embd, n_head)
         self.ln2 = layers.LayerNormalization(epsilon=1e-6)
         self.ffwd = FeedForward(n_embd)
+        #self.ffwd = FeedForwardConv(n_embd)
 
         self.dropout_sa = layers.Dropout(dropout_rate)
         self.dropout_ffn = layers.Dropout(dropout_rate)
