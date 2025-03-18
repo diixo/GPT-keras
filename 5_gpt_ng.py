@@ -140,7 +140,7 @@ class CausalSelfAttention(layers.Layer):
         v = tf.transpose(v, perm=[0, 2, 1, 3])                      # (B, n_head, T, head_size)
 
         ########################################
-        # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
+        # causal self-attention: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
         """
         q: (B, nh, T, hs)
         k: (B, nh, T, hs)
@@ -151,12 +151,13 @@ class CausalSelfAttention(layers.Layer):
         # (B, nh, T, hs) --> (B, nh, hs, T)
         k_T = tf.transpose(k, perm=[0, 1, 3, 2])
 
-        d_k = tf.cast(k_T.shape[-1], dtype=tf.float32)
+        d_k = tf.cast(k.shape[-1], dtype=tf.float32)
         scale = tf.math.rsqrt(d_k)
 
         att = tf.matmul(q, k_T) * scale  # (B, nh, T, T)
         #att = tf.where(self.tril[:T, :T] == 0, float('-inf'), att)
-        att = tf.where(self.tril == 0, float('-inf'), att)
+        #att = tf.where(self.tril == 0, float('-inf'), att)
+        att = tf.where(self.tril[:, :, :T, :T] == 0, float('-inf'), att)
         att = tf.nn.softmax(att, axis=-1)
         att = self.attn_dropout(att)
         y = tf.matmul(att, v)   # (B, nh, T, T) x (B, nh, T, hs) --> (B, nh, T, hs)
