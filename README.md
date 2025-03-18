@@ -47,7 +47,7 @@ The code in this repository is thoroughly explained in the accompanying code, th
 
 ## References:
 
-* https://github.com/j-planet/andrej_chatgpt
+* https://github.com/j-planet/andrej_chatgpt/blob/master/keras/gpt.py (Conv1D)
 
 * https://github.com/cloudxlab/GPT-from-scratch
 
