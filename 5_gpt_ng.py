@@ -190,6 +190,70 @@ class FeedForwardConv(layers.Layer):
         return out
 
 
+class FeedForwardHybrid(layers.Layer):
+
+    def __init__(self, n_embd, dropout_rate=0.1):
+        super().__init__()
+        self.n_embd = n_embd
+
+        self.dense_net = keras.Sequential([
+            layers.Dense(units=4 * n_embd), # (n_embd, 4*n_embd)
+            GELU(),
+            layers.Dense(units=n_embd),     # (4*n_embd, n_embd)
+            layers.Dropout(dropout_rate),
+        ])
+
+        self.conv_net = keras.Sequential([
+            layers.Conv1D(filters=4 * n_embd, kernel_size=1),
+            GELU(),
+            layers.Conv1D(filters=n_embd, kernel_size=1),
+            layers.Dropout(dropout_rate)
+        ])
+
+        self.norm = layers.LayerNormalization()
+        self.final_dense = layers.Dense(units=n_embd)
+
+
+    def call(self, x):
+        dense_out = self.dense_net(x)       # global neurons connections
+        conv_out = self.conv_net(x)         # local neurons connections
+        combined = dense_out + conv_out
+        normalized = self.norm(combined)
+        return self.final_dense(normalized)
+
+
+class FeedForwardHybridConvDense(layers.Layer):
+
+    def __init__(self, n_embd, dropout_rate=0.1):
+        super().__init__()
+        self.n_embd = n_embd
+
+        self.conv_net = keras.Sequential([
+            layers.Conv1D(filters=4 * n_embd, kernel_size=1),
+            GELU(),
+            layers.Conv1D(filters=n_embd, kernel_size=1),
+            layers.Dropout(dropout_rate),
+        ])
+
+        self.dense_net = keras.Sequential([
+            layers.Dense(units=4 * n_embd),  # (n_embd, 4*n_embd)
+            GELU(),
+            layers.Dense(units=n_embd),      # (4*n_embd, n_embd)
+            layers.Dropout(dropout_rate),
+        ])
+
+        #self.final_dense = layers.Dense(units=n_embd)
+
+    def call(self, x):
+        conv_out = self.conv_net(x)
+
+        dense_out = self.dense_net(conv_out)
+        return dense_out
+
+        #combined = conv_out + dense_out
+        #return self.final_dense(combined)
+
+
 class Block(layers.Layer):
     """ Transformer block: communication followed by computation """
 
@@ -201,7 +265,7 @@ class Block(layers.Layer):
         self.csa = CausalSelfAttention(n_embd, n_head)
         self.ln2 = layers.LayerNormalization(epsilon=1e-6)
         self.ffwd = FeedForward(n_embd)
-        #self.ffwd = FeedForwardConv(n_embd)
+        #self.ffwd = FeedForwardHybridConvDense(n_embd)
 
         self.dropout_sa = layers.Dropout(dropout_rate)
         self.dropout_ffn = layers.Dropout(dropout_rate)
@@ -315,6 +379,6 @@ model = BigramLanguageModel(vocab_size)
 train_model(model)
 
 # Generate text from the model
-generated_text = decode(model.generate_text(prompt="good", max_new_tokens=500, do_sample=False))
+generated_text = decode(model.generate_text(prompt="good", max_new_tokens=500, do_sample=True))
 print(generated_text)
 
