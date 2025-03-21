@@ -8,7 +8,6 @@ with open('input.txt', 'r', encoding='utf-8') as f:
 
 #
 vocab = sorted(set(text))
-char_to_idx = {ch: i for i, ch in enumerate(vocab)}
 idx_to_char = np.array(vocab)
 vocab_size = len(vocab)
 
@@ -22,7 +21,7 @@ data = tf.constant(encode(text), dtype=tf.int32)
 n = int(0.9 * len(data))
 ###############################
 
-text_as_int = np.array([char_to_idx[c] for c in text], dtype=np.int32)
+text_as_int = np.array(encode(text), dtype=np.int32)
 
 # hyperparams
 seq_length = 64
@@ -52,19 +51,18 @@ config = GPT2Config(vocab_size=vocab_size, n_positions=seq_length,
                     n_inner=dff)
 model = TFGPT2LMHeadModel(config)
 
-#model.summary()
-
 #
-optimizer = tf.keras.optimizers.Adam(learning_rate=5e-4)
+optimizer = tf.keras.optimizers.AdamW(learning_rate=5e-4)
 loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 model.compile(optimizer=optimizer, loss=loss_fn)
 
 model.fit(dataset, epochs=epochs)
 
+model.summary()
+
 
 def generate_text(model, start_string, length=100):
-    input_eval = [char_to_idx[c] for c in start_string]
-    input_eval = tf.convert_to_tensor([input_eval])
+    input_eval = tf.convert_to_tensor([encode(start_string)])
     generated_text = []
 
     for _ in range(length):
