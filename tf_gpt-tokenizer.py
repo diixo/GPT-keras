@@ -2,9 +2,15 @@ import tensorflow as tf
 import numpy as np
 from transformers import TFGPT2LMHeadModel, GPT2Config
 from pathlib import Path
+from transformers import AutoTokenizer
+
+import os
 
 
-epochs = 20
+# Загружаем токенайзер MiniLM
+tokenizer = AutoTokenizer.from_pretrained("all-MiniLM-L6-v2")
+
+epochs = 1
 
 # ---------- hyperparams ----------
 batch_size = 32
@@ -21,22 +27,24 @@ filepath = f"shakespeare-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_he
 with open('input.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
-###############################
-vocab = sorted(set(text))
-vocab_size = len(vocab)
+tokenized_text = tokenizer.encode(text, add_special_tokens=True)  # Добавляем специальные токены
+
+# Преобразуем в массив numpy
+text_as_int = np.array(tokenized_text, dtype=np.int32)
+
+# Размер словаря из MiniLM
+vocab_size = tokenizer.vocab_size
 
 ###############################
-stoi = {ch: i for i, ch in enumerate(vocab)}
-itos = np.array(vocab)
-encode = lambda s: [stoi[c] for c in s]
-decode = lambda l: ''.join([itos[i] for i in l])
-data = tf.constant(encode(text), dtype=tf.int32)
-n = int(0.9 * len(data))
+# stoi = {ch: i for i, ch in enumerate(vocab)}
+# itos = np.array(vocab)
+# encode = lambda s: [stoi[c] for c in s]
+# decode = lambda l: ''.join([itos[i] for i in l])
+# data = tf.constant(encode(text), dtype=tf.int32)
+n = int(0.9 * len(text_as_int))
 ###############################
 
 buffer_size = n
-text_as_int = np.array(encode(text), dtype=np.int32)
-
 
 def split_input_target(chunk):
     return chunk[:-1], chunk[1:]
@@ -58,34 +66,23 @@ optimizer = tf.keras.optimizers.AdamW(learning_rate=5e-4)
 loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 model.compile(optimizer=optimizer, loss=loss_fn)
 
-
-if Path(filepath).exists():
-    dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
-    model(dummy_input)
-    model.load_weights(filepath)
-else:
-    model.fit(dataset, epochs=epochs)
-    model.save_weights(filepath)
+model.fit(dataset, epochs=epochs)
 
 model.summary()
 
 
-def generate_text(model, start_string, length=100):
-    input_eval = tf.convert_to_tensor([encode(start_string)])
-    generated_text = []
-
+def generate_text(model, start_string, length=50):
+    input_eval = tokenizer.encode(start_string, return_tensors="tf")
+    
     for _ in range(length):
         predictions = model(input_eval).logits
         predictions = predictions[:, -1, :]
         predicted_id = tf.random.categorical(predictions, num_samples=1)[-1, 0].numpy()
-
+        
         input_eval = tf.concat([input_eval, [[predicted_id]]], axis=-1)
-        input_eval = input_eval[:, -config.n_positions:]
 
-        generated_text.append(itos[predicted_id])
-
-    return start_string + ''.join(generated_text)
+    return tokenizer.decode(input_eval.numpy()[0])
 
 
-generated = generate_text(model, "ROMEO: ", 500)
+generated = generate_text(model, "ROMEO: ", 100)
 print(generated)
