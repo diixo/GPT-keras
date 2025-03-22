@@ -71,13 +71,14 @@ model.summary()
 
 
 def generate_text(model, start_string, length=100):
-    input_eval = tf.convert_to_tensor([encode(start_string)])
+    input_eval = tf.convert_to_tensor([encode(start_string)]) # (1, len(str))
     generated_text = []
 
     for _ in range(length):
-        predictions = model(input_eval).logits
-        predictions = predictions[:, -1, :]
-        predicted_id = tf.random.categorical(predictions, num_samples=1)[-1, 0].numpy()
+        predictions = model(input_eval).logits  # (1, len(str), vocab_size)
+        predictions = predictions[:, -1, :]     # (1, vocab_size)
+        categoricals = tf.random.categorical(predictions, num_samples=1)
+        predicted_id = categoricals[-1, 0].numpy()
 
         input_eval = tf.concat([input_eval, [[predicted_id]]], axis=-1)
         input_eval = input_eval[:, -config.n_positions:]
