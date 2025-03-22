@@ -6,7 +6,7 @@ from transformers import AutoTokenizer
 
 tokenizer = AutoTokenizer.from_pretrained("all-MiniLM-L6-v2")
 
-epochs = 1
+epochs = 10
 
 # ---------- hyperparams ----------
 batch_size = 32
@@ -18,6 +18,8 @@ num_layers = 4
 dropout_rate = 0.1
 #----------------------------------
 
+filepath = f"shakespeare-miniLM-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
+
 with open('input.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
@@ -27,18 +29,8 @@ print(len(tokens))
 
 vocab_size = tokenizer.vocab_size
 
-# def create_sequences(tokenized_text, seq_length):
-#     X, Y = [], []
-#     for i in range(len(tokenized_text) - seq_length):
-#         X.append(tokenized_text[i: i + seq_length])
-#         Y.append(tokenized_text[i + 1: i + seq_length + 1])
-#     return np.array(X), np.array(Y)
-
-
-# X, Y = create_sequences(tokens, seq_length)
-
 steps_per_epoch = len(tokens) // (batch_size * (seq_length + 1))  # количество батчей на одну эпоху
-print(f"Количество батчей в эпохе: {steps_per_epoch}")
+print(f"Batches per epoch: {steps_per_epoch}")
 
 #########################################################
 
@@ -68,21 +60,42 @@ optimizer = tf.keras.optimizers.AdamW(learning_rate=5e-4)
 loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 model.compile(optimizer=optimizer, loss=loss_fn)
 
-model.fit(dataset, epochs=epochs)
+if Path(filepath).exists():
+    dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
+    model(dummy_input)
+    model.load_weights(filepath)
+else:
+    model.fit(dataset, epochs=epochs)
+    model.save_weights(filepath)
 
 model.summary()
 
 def generate_text(model, start_string, length=50):
     input_ids = tokenizer(start_string, return_tensors="tf")["input_ids"]
+    generated_text = []
 
     for _ in range(length):
         predictions = model(input_ids).logits
         predictions = predictions[:, -1, :]
-        predicted_id = tf.random.categorical(predictions, num_samples=1).numpy()[0, 0]
+        categoricals = tf.random.categorical(predictions, num_samples=1).numpy()
+        predicted_id = categoricals[-1, 0]
+
         input_ids = tf.concat([input_ids, [[predicted_id]]], axis=-1)
+        input_ids = input_ids[:, -config.n_positions:]
 
-    return tokenizer.decode(input_ids.numpy()[0])
+        generated_text.append(predicted_id)
+
+    tokens = tokenizer.convert_ids_to_tokens(generated_text)
+
+    # Insert spaces
+    text = ""
+    for token in tokens:
+        if token.startswith("##"):
+            text += token[2:]
+        else:
+            text += " " + token
+    return text.strip()
 
 
-generated = generate_text(model, "ROMEO: ", 100)
+generated = generate_text(model, "ROMEO: ")
 print(generated)
