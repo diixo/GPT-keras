@@ -87,5 +87,5 @@ def generate_text(model, start_string, length=100):
     return start_string + ''.join(generated_text)
 
 
-generated = generate_text(model, "ROMEO: ")
+generated = generate_text(model, "ROMEO: ", 500)
 print(generated)
