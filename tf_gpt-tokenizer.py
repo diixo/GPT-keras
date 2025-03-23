@@ -29,8 +29,8 @@ print(len(tokens))
 
 vocab_size = tokenizer.vocab_size
 
-steps_per_epoch = len(tokens) // (batch_size * (seq_length + 1))  # количество батчей на одну эпоху
-print(f"Batches per epoch: {steps_per_epoch}")
+batches_per_epoch = len(tokens) // (batch_size * (seq_length + 1))
+print(f"Batches per epoch: {batches_per_epoch}")
 
 #########################################################
 
@@ -72,7 +72,7 @@ model.summary()
 
 def generate_text(model, start_string, length=50):
     input_ids = tokenizer(start_string, return_tensors="tf")["input_ids"]
-    generated_text = []
+    generated_ids = []
 
     for _ in range(length):
         predictions = model(input_ids).logits
@@ -83,12 +83,14 @@ def generate_text(model, start_string, length=50):
         input_ids = tf.concat([input_ids, [[predicted_id]]], axis=-1)
         input_ids = input_ids[:, -config.n_positions:]
 
-        generated_text.append(predicted_id)
+        generated_ids.append(predicted_id)
 
-    tokens = tokenizer.convert_ids_to_tokens(generated_text)
+    tokens = tokenizer.convert_ids_to_tokens(generated_ids)
+
+    #print(tokenizer.decode(generated_ids, skip_special_tokens=True))
 
     # Insert spaces
-    text = ""
+    text = start_string
     for token in tokens:
         if token.startswith("##"):
             text += token[2:]
