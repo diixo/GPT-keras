@@ -5,7 +5,7 @@ tokenizer = AutoTokenizer.from_pretrained("all-MiniLM-L6-v2")
 
 text = ["This is a sentence viiX.", "viiX is about of IT", "Here is another sentence, that is a bit longer."]
 
-# add_special_tokens=True (by default): [CLS]=101, [SEP]=102...
+# add_special_tokens=True (by default): [CLS]=101, [SEP]=102 is EOS
 tokens = tokenizer(text, add_special_tokens=False, truncation=False, padding=True, return_tensors="np")
 
 input_ids = tokens["input_ids"]
