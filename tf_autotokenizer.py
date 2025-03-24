@@ -1,8 +1,6 @@
-import tensorflow as tf
 from transformers import AutoTokenizer
 
 
-batch_size = 1
 tokenizer = AutoTokenizer.from_pretrained("all-MiniLM-L6-v2")
 
 text = ["This is a sentence viiX.", "viiX is about of IT", "Here is another sentence, that is a bit longer."]
