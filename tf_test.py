@@ -9,14 +9,14 @@ def str_tokenize_words(s: str, stopwords=set()):
     if words: return [w for w in words if w not in stopwords]
     return []
 
-
+# ---------- hyperparams ----------
 batch_size = 32
 seq_length = 32
 embedding_dim = 256
 dff = 256
 num_heads = 4
 num_layers = 4
-
+#----------------------------------
 epochs = 3
 
 
@@ -28,6 +28,10 @@ with open(file_path, 'r', encoding='utf-8') as file:
 
 lines = [line for line in texts if len(str_tokenize_words(line)) > 1]
 
+batches_per_epoch = len(lines) // batch_size
+print(f"Lines: {len(lines)}, Batches per epoch: {batches_per_epoch}")
+
+#####################################################################
 
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 tokenizer.pad_token = tokenizer.eos_token
