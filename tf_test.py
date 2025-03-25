@@ -1,5 +1,6 @@
 from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config
 import tensorflow as tf
+from pathlib import Path
 import re
 
 
@@ -7,6 +8,7 @@ def str_tokenize_words(s: str, stopwords=set()):
     words = re.findall("(\.?\w[\w'\.&]*\w|\w\+*#?)", s)
     if words: return [w for w in words if w not in stopwords]
     return []
+
 
 batch_size = 32
 seq_length = 32
@@ -44,27 +46,45 @@ config = GPT2Config(
 )
 model = TFGPT2LMHeadModel(config)
 
-inputs = encodings['input_ids']
-labels = encodings['input_ids']
-attention_mask = encodings['attention_mask']
+input_ids = encodings["input_ids"]
+attention_masks = encodings["attention_mask"]
 
 
-dataset = tf.data.Dataset.from_tensor_slices((inputs, labels, attention_mask))
+def compute_loss(labels, logits):
+    logits = logits[:, :-1, :]
+    loss = tf.reduce_mean(tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True))
+    return loss
 
-dataset = dataset.shuffle(1000).batch(batch_size, drop_remainder=True)
+
+def split_input_target(input_chunk, attention_mask):
+    input_chunk = input_chunk[:-1]
+    target_chunk = input_chunk[1:]
+    attention_mask = attention_mask[:-1]
+    return input_chunk, target_chunk, attention_mask
+
+
+def map_fn(input_chunk, attention_mask):
+    return split_input_target(input_chunk, attention_mask)
+
+
+dataset = (tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
+           .map(map_fn)
+           .shuffle(10000)
+           .batch(batch_size, drop_remainder=True))
 
 
 optimizer = tf.keras.optimizers.AdamW(learning_rate=5e-4)
 
 
-def compute_loss(labels, logits):
-    loss = tf.reduce_mean(tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True))
-    return loss
-
 model.compile(optimizer=optimizer, loss=compute_loss)
 
-model.fit(dataset, epochs=epochs)
+if Path(model_path).exists():
+    dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
+    model(dummy_input)
+    model.load_weights(model_path)
+else:
+    model.fit(dataset, epochs=epochs)
+    model.save_weights(model_path)
 
 model.summary()
 
-model.save_weights(model_path)
