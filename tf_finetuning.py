@@ -13,7 +13,7 @@ import numpy as np
 
 
 # ---------- hyperparams ----------
-batch_size = 32
+batch_size = 12
 seq_length = 100
 embedding_dim = 256
 dff = 256
@@ -87,12 +87,11 @@ for example in examples:
 train_data = np.array(train_data).astype(np.int32)
 labels = np.array(labels).astype(np.int32)
 
-buffer = 5000
-batch_size = 12
+
 print(train_data.shape)
 dataset = tf.data.Dataset.from_tensor_slices((train_data, labels))
 
-dataset = dataset.shuffle(buffer).batch(batch_size, drop_remainder=True)
+dataset = dataset.shuffle(5000).batch(batch_size, drop_remainder=True)
 
 print(len(dataset))
 
