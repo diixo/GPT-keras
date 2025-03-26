@@ -14,7 +14,7 @@ import numpy as np
 
 # ---------- hyperparams ----------
 batch_size = 32
-seq_length = 64
+seq_length = 100
 embedding_dim = 256
 dff = 256
 num_heads = 4
@@ -64,24 +64,23 @@ print("lines=", len(content))
 
 content_p = []
 for c in content:
-    if len(c)>10:
+    if len(c) > 10:
         content_p.append(c.strip())
-content_p = " ".join(content_p)+tokenizer_gpt.eos_token
+content_p = " ".join(content_p) + tokenizer_gpt.eos_token
 
 tokenized_content = tokenizer_gpt.encode(content_p)
 
 print("tokenized_content=", len(tokenized_content))
 
-sample_len = 100
 examples = []
 for i in range(0, len(tokenized_content)):
-    examples.append(tokenized_content[i: i + sample_len])
+    examples.append(tokenized_content[i: i + seq_length])
 
 ##################### prepare train-data #####################
 train_data = []
 labels = []
 for example in examples:
-    if len(example) == 100:
+    if len(example) == seq_length:
         train_data.append(example[:-1])
         labels.append(example[1:])
 
@@ -90,7 +89,8 @@ labels = np.array(labels).astype(np.int32)
 
 buffer = 5000
 batch_size = 12
-dataset = tf.data.Dataset.from_tensor_slices((train_data,labels))
+print(train_data.shape)
+dataset = tf.data.Dataset.from_tensor_slices((train_data, labels))
 
 dataset = dataset.shuffle(buffer).batch(batch_size, drop_remainder=True)
 
