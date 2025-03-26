@@ -11,8 +11,8 @@ tokens = tokenizer(text, add_special_tokens=True, truncation=False, padding=True
 input_ids = tokens["input_ids"]
 attention_mask = tokens["attention_mask"]
 
-print(input_ids)
-print(attention_mask)
+print("input_ids:\n", input_ids)
+print("attention_mask:\n", attention_mask)
 print("max_id:", input_ids.max())
 print("max_sz:", input_ids.shape[-1])
 
