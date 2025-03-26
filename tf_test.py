@@ -1,4 +1,4 @@
-from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config
+from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config, AutoTokenizer
 import tensorflow as tf
 from pathlib import Path
 import re
@@ -33,7 +33,7 @@ print(f"Lines: {len(lines)}, Batches per epoch: {batches_per_epoch}")
 
 #####################################################################
 
-tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+tokenizer = AutoTokenizer.from_pretrained('gpt2')
 tokenizer.pad_token = tokenizer.eos_token
 
 
@@ -77,10 +77,13 @@ dataset = (tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
            .batch(batch_size, drop_remainder=True))
 
 
+model = TFGPT2LMHeadModel(config)
 optimizer = tf.keras.optimizers.AdamW(learning_rate=5e-4)
 
 
 model.compile(optimizer=optimizer, loss=compute_loss)
+
+
 
 if Path(model_path).exists():
     dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
@@ -90,5 +93,36 @@ else:
     model.fit(dataset, epochs=epochs)
     model.save_weights(model_path)
 
+
 model.summary()
 
+
+def generate_text(model, tokenizer: GPT2Tokenizer, prompt: str):
+    # Токенизация входного текста
+    encoding = tokenizer(prompt, return_tensors='tf')
+    
+    # Проверка содержимого encoding
+    if "input_ids" not in encoding or encoding["input_ids"] is None:
+        raise ValueError("Ошибка: 'input_ids' не был сгенерирован!")
+
+    _ids = encoding["input_ids"]
+
+    # Выводим отладочную информацию
+    print(f"input_ids type: {type(_ids)}")
+    print(f"input_ids shape: {_ids.shape}")
+    print(f"input_ids tensor: {_ids}")
+
+    # Используем метод tf.squeeze(), чтобы избавиться от лишних измерений
+    _ids = tf.squeeze(_ids, axis=0)
+
+    # Декодируем токены в текст
+    decoded_text = tokenizer.decode(_ids.numpy(), skip_special_tokens=True)
+
+    print(f"Decoded text: {decoded_text}")
+    
+    return decoded_text
+
+# Вызов функции
+#result = generate_text(model, tokenizer, "ROMEO:")
+
+#print(f"Final result: {result}")
