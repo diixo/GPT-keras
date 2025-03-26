@@ -10,6 +10,7 @@ from tokenizers.trainers import BpeTrainer
 from transformers import GPT2TokenizerFast, GPT2Config, TFGPT2LMHeadModel
 import tensorflow as tf
 import numpy as np
+from pathlib import Path
 import re
 
 
@@ -27,7 +28,7 @@ num_heads = 4
 num_layers = 4
 # ---------------------------------
 
-epochs = 2
+epochs = 3
 learning_rate = 5e-4
 
 model_path = "tokenizer-gpt/tf-finetuning-gen2.h5"
@@ -79,8 +80,6 @@ with open("austen-emma.txt", "r", encoding='utf-8') as f:
 
 content = [line.strip() for line in content if len(str_tokenize_words(line)) > 4]
 
-print("lines=", len(content))
-
 encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
 
 
@@ -88,6 +87,7 @@ train_data = encodings["input_ids"][:, :-1]
 labels = encodings["input_ids"][:, 1:]
 attention_masks = encodings["attention_mask"][:, :-1]
 
+print("train_data.shape =", train_data.shape)
 
 dataset = tf.data.Dataset.from_tensor_slices((train_data, labels, attention_masks))
 dataset = dataset.shuffle(5000).batch(batch_size, drop_remainder=True)
@@ -97,7 +97,6 @@ print(len(dataset))
 
 # Defining Model optimizer, loss metrics and compiling Model ###################################
 model = TFGPT2LMHeadModel(config)
-#model = TFGPT2LMHeadModel.from_pretrained("my_gpt2")
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=1e-08, clipnorm=1.0)
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
@@ -110,7 +109,15 @@ def train_step(x, mask, y):
 
 dataset = dataset.map(train_step)
 
-model.fit(dataset, epochs=epochs)
+
+if Path(model_path).exists():
+    dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
+    model(dummy_input)
+    model.load_weights(model_path)
+else:
+    model.fit(dataset, epochs=epochs)
+    model.save_weights(model_path)
+    #model.save("my_gpt2")
 
 # --------------------------------------------------
 model.summary()
@@ -137,9 +144,5 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel):
         )
     return tokenizer_gpt.decode(output[0])
 
-
-#model.save_weights(model_path)
-
-#model.save("my_gpt2")
 
 print(generate_text("the", model))
