@@ -1,0 +1,135 @@
+
+# https://www.kaggle.com/code/vimalpillai/finetuning-gpt2-model-tensorflow/notebook
+
+from tokenizers.models import BPE
+from tokenizers import Tokenizer
+from tokenizers.decoders import ByteLevel as ByteLevelDecoder
+from tokenizers.normalizers import Sequence, Lowercase
+from tokenizers.pre_tokenizers import ByteLevel
+from tokenizers.trainers import BpeTrainer
+from transformers import GPT2TokenizerFast, GPT2Config, TFGPT2LMHeadModel
+import tensorflow as tf
+import numpy as np
+import re
+
+
+def str_tokenize_words(s: str, stopwords=set()):
+    words = re.findall("(\.?\w[\w'\.&]*\w|\w\+*#?)", s)
+    if words: return [w for w in words if w not in stopwords]
+    return []
+
+# ---------- hyperparams ----------
+batch_size = 32
+seq_length = 32
+embedding_dim = 256
+dff = 256
+num_heads = 4
+num_layers = 4
+# ---------------------------------
+
+epochs = 3
+learning_rate = 5e-4
+
+
+tokenizer = Tokenizer(BPE())
+tokenizer.normalizer = Sequence([Lowercase()])
+tokenizer.pre_tokenizer = ByteLevel()
+tokenizer.decoder = ByteLevelDecoder()
+
+trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(),special_tokens=[
+    "<pad>","<a>","</s>","<unk>","<mask>"
+    ])
+
+tokenizer.train(["austen-emma.txt"],trainer)
+
+tokenizer.save("tokenizer-gpt/tokenizer.json")
+
+tokenizer_gpt = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
+
+tokenizer_gpt.add_special_tokens({
+    "eos_token": "</s>",
+    "bos_token": "<s>",
+    "unk_token": "<unk>",
+    "pad_token": "<pad>",
+    "mask_token": "<mask>"
+})
+
+print("bos_token_id =", tokenizer_gpt.bos_token_id)
+
+tokenizer_gpt.encode("<s> This  is </s>")
+
+config = GPT2Config(
+    n_positions=seq_length,
+    n_embd=embedding_dim,
+    n_layer=num_layers,
+    n_head=num_heads,
+    n_inner=dff,
+
+    vocab_size=tokenizer_gpt.vocab_size,
+    bos_token_id=tokenizer_gpt.bos_token_id,
+    eos_token_id=tokenizer_gpt.eos_token_id
+)
+
+
+# Text Data Preprocessing #################################
+with open("austen-emma.txt", "r", encoding='utf-8') as f:
+    content = f.readlines()
+
+content = [line.strip() for line in content if len(str_tokenize_words(line)) > 4]
+
+print("lines=", len(content))
+
+encodings = tokenizer_gpt(
+    content,
+    padding="max_length",
+    truncation=True,
+    max_length=seq_length,
+    return_tensors="np"
+)
+
+
+train_data = encodings["input_ids"][:, :-1]
+labels = encodings["input_ids"][:, 1:]
+attention_masks = encodings["attention_mask"][:, :-1]
+
+
+dataset = tf.data.Dataset.from_tensor_slices((train_data, labels, attention_masks))
+dataset = dataset.shuffle(5000).batch(batch_size, drop_remainder=True)
+
+print(len(dataset))
+
+
+# Defining Model optimizer, loss metrics and compiling Model ###################################
+model = TFGPT2LMHeadModel(config)
+
+optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=1e-08, clipnorm=1.0)
+loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
+model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
+
+# Обучение с передачей attention_mask
+def train_step(x, mask, y):
+    return {"input_ids": x, "attention_mask": mask}, y
+
+dataset = dataset.map(train_step)
+
+model.fit(dataset, epochs=epochs)
+
+# Making Prediction and Saving Model ###########################################################
+
+def generate_text(start, model):
+    input_token_ids = tokenizer_gpt.encode(start, return_tensors='tf')
+    output = model.generate(input_token_ids, max_length = 200,
+        num_beams = 5,
+        temperature = 0.7,
+        no_repeat_ngram_size = 2,
+        num_return_sequences = 1
+        )
+    return tokenizer_gpt.decode(output[0])
+
+
+model.save_weights("fine_tuned_gpt.h5")
+
+#model.save("my_gpt2")
+
+generate_text(" ", model)
