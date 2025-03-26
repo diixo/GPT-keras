@@ -27,7 +27,7 @@ tokenizer.normalizer = Sequence([Lowercase()])
 tokenizer.pre_tokenizer = ByteLevel()
 tokenizer.decoder = ByteLevelDecoder()
 
-trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(),special_tokens=[
+trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), special_tokens=[
     "<a>","<pad>","</s>","<unk>","<mask>"
     ])
 
@@ -115,12 +115,12 @@ def generate_text(start, model):
     output = model.generate(input_token_ids,max_length = 200,
             num_beams = 5,
             temperature = 0.7,
-            no_repeat_ngram_size=2,
-            num_return_sequences=1
+            no_repeat_ngram_size = 2,
+            num_return_sequences = 1
             )
     return tokenizer_gpt.decode(output[0])
 
 
 model.save_weights("fine_tuned_gpt.h5")
 
-generate_text(" ", model)
+print(generate_text("the", model))
