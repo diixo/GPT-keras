@@ -31,8 +31,6 @@ num_layers = 4
 epochs = 3
 learning_rate = 5e-4
 
-model_path = "tokenizer-gpt/tf-finetuning-gen2.h5"
-
 
 tokenizer = Tokenizer(BPE())
 tokenizer.normalizer = Sequence([Lowercase()])
@@ -40,7 +38,7 @@ tokenizer.pre_tokenizer = ByteLevel()
 tokenizer.decoder = ByteLevelDecoder()
 
 trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), special_tokens=[
-    "<pad>","<a>","</s>","<unk>","<mask>"
+    "<pad>", "<s>", "</s>", "<unk>", "<mask>"
     ])
 
 tokenizer.train(["austen-emma.txt"],trainer)
@@ -51,15 +49,13 @@ tokenizer_gpt = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
 
 tokenizer_gpt.add_special_tokens({
     "pad_token": "<pad>",
-    "eos_token": "</s>",
     "bos_token": "<s>",
+    "eos_token": "</s>",
     "unk_token": "<unk>",
     "mask_token": "<mask>"
 })
 
 print("bos_token_id =", tokenizer_gpt.bos_token_id)
-
-tokenizer_gpt.encode("<s> This  is </s>")
 
 config = GPT2Config(
     n_positions=seq_length,
@@ -87,11 +83,10 @@ train_data = encodings["input_ids"][:, :-1]
 labels = encodings["input_ids"][:, 1:]
 attention_masks = encodings["attention_mask"][:, :-1]
 
-print("train_data.shape =", train_data.shape)
-
 dataset = tf.data.Dataset.from_tensor_slices((train_data, labels, attention_masks))
 dataset = dataset.shuffle(5000).batch(batch_size, drop_remainder=True)
 
+print("train_data.shape =", train_data.shape)
 print(len(dataset))
 
 
@@ -110,6 +105,9 @@ def train_step(x, mask, y):
 dataset = dataset.map(train_step)
 
 
+###################################################
+model_path = "tokenizer-gpt/tf-finetuning-gen2.h5"
+
 if Path(model_path).exists():
     dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
     model(dummy_input)
@@ -124,25 +122,38 @@ model.summary()
 
 # Making Prediction and Saving Model ###########################################################
 
-def generate_text(prompt: str, model: TFGPT2LMHeadModel):
+def generate_text(prompt: str, model: TFGPT2LMHeadModel, max_length = seq_length):
 
-    encodings = tokenizer_gpt(prompt, return_tensors='tf')
+    assert(max_length <= seq_length)
+
+    model.config.pad_token_id = tokenizer_gpt.pad_token_id
+    model.config.bos_token_id = tokenizer_gpt.bos_token_id
+    model.config.eos_token_id = tokenizer_gpt.eos_token_id
+
+    # print(tokenizer_gpt.special_tokens_map)
+    # print(tokenizer_gpt.convert_tokens_to_ids(["<pad>", "<s>", "</s>", "<unk>", "<mask>"]))
+
+    ########################################################
+    # test_ids = tokenizer_gpt.encode("This is a test", add_special_tokens=True)
+    # print(tokenizer_gpt.decode(test_ids, skip_special_tokens=True))
+    ########################################################
+
+    encodings = tokenizer_gpt([prompt], return_tensors='tf')
 
     input_token_ids = encodings['input_ids']
     attention_mask = encodings['attention_mask']
 
-    #model.config.pad_token_id = tokenizer_gpt.eos_token_id
-
     output = model.generate(
         input_token_ids,
-        attention_mask=attention_mask,
-        max_length = 100,
+        attention_mask = attention_mask,
+        max_length = max_length,
         num_beams = 5,
         do_sample = False,
         no_repeat_ngram_size = 2,
         num_return_sequences = 1
         )
-    return tokenizer_gpt.decode(output[0])
+    # use add_special_tokens=True, because we use padding as special symbol
+    return tokenizer_gpt.decode(output[0], skip_special_tokens=True)
 
 
-print(generate_text("the", model))
+print(generate_text("Emma was", model))
