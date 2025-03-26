@@ -27,8 +27,10 @@ num_heads = 4
 num_layers = 4
 # ---------------------------------
 
-epochs = 3
+epochs = 2
 learning_rate = 5e-4
+
+model_path = "tokenizer-gpt/tf-finetuning-gen2.h5"
 
 
 tokenizer = Tokenizer(BPE())
@@ -79,13 +81,7 @@ content = [line.strip() for line in content if len(str_tokenize_words(line)) > 4
 
 print("lines=", len(content))
 
-encodings = tokenizer_gpt(
-    content,
-    padding="max_length",
-    truncation=True,
-    max_length=seq_length,
-    return_tensors="np"
-)
+encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
 
 
 train_data = encodings["input_ids"][:, :-1]
@@ -115,21 +111,36 @@ dataset = dataset.map(train_step)
 
 model.fit(dataset, epochs=epochs)
 
+# --------------------------------------------------
+model.summary()
+
 # Making Prediction and Saving Model ###########################################################
 
-def generate_text(start, model):
-    input_token_ids = tokenizer_gpt.encode(start, return_tensors='tf')
-    output = model.generate(input_token_ids, max_length = 200,
+def generate_text(prompt, model):
+    encodings = tokenizer_gpt(
+        prompt,
+        return_tensors='tf'
+    )
+
+    input_token_ids = encodings['input_ids']
+    attention_mask = encodings['attention_mask']
+
+    #model.config.pad_token_id = tokenizer_gpt.eos_token_id
+
+    output = model.generate(
+        input_token_ids,
+        attention_mask=attention_mask,
+        max_length = 100,
         num_beams = 5,
-        temperature = 0.7,
+        do_sample = False,
         no_repeat_ngram_size = 2,
         num_return_sequences = 1
         )
     return tokenizer_gpt.decode(output[0])
 
 
-model.save_weights("fine_tuned_gpt.h5")
+model.save_weights(model_path)
 
 #model.save("my_gpt2")
 
-generate_text(" ", model)
+generate_text("the", model)
