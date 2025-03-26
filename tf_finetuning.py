@@ -54,7 +54,7 @@ config = GPT2Config(
     bos_token_id=tokenizer_gpt.bos_token_id,
     eos_token_id=tokenizer_gpt.eos_token_id
 )
-model = TFGPT2LMHeadModel(config)
+
 
 # Text Data Preprocessing #################################
 with open("austen-emma.txt", "r", encoding='utf-8') as f:
@@ -88,7 +88,6 @@ train_data = np.array(train_data).astype(np.int32)
 labels = np.array(labels).astype(np.int32)
 
 
-print(train_data.shape)
 dataset = tf.data.Dataset.from_tensor_slices((train_data, labels))
 
 dataset = dataset.shuffle(5000).batch(batch_size, drop_remainder=True)
@@ -97,6 +96,7 @@ print(len(dataset))
 
 
 # Defining Model optimizer, loss metrics and compiling Model ###################################
+model = TFGPT2LMHeadModel(config)
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4, epsilon=1e-08, clipnorm=1.0)
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
@@ -122,7 +122,5 @@ def generate_text(start, model):
 
 
 model.save_weights("fine_tuned_gpt.h5")
-
-model.save("my_gpt2")
 
 generate_text(" ", model)
