@@ -38,7 +38,7 @@ tokenizer.normalizer = Sequence([Lowercase()])
 tokenizer.pre_tokenizer = ByteLevel()
 tokenizer.decoder = ByteLevelDecoder()
 
-trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(),special_tokens=[
+trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), special_tokens=[
     "<pad>","<a>","</s>","<unk>","<mask>"
     ])
 
@@ -49,10 +49,10 @@ tokenizer.save("tokenizer-gpt/tokenizer.json")
 tokenizer_gpt = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
 
 tokenizer_gpt.add_special_tokens({
+    "pad_token": "<pad>",
     "eos_token": "</s>",
     "bos_token": "<s>",
     "unk_token": "<unk>",
-    "pad_token": "<pad>",
     "mask_token": "<mask>"
 })
 
@@ -97,6 +97,7 @@ print(len(dataset))
 
 # Defining Model optimizer, loss metrics and compiling Model ###################################
 model = TFGPT2LMHeadModel(config)
+#model = TFGPT2LMHeadModel.from_pretrained("my_gpt2")
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=1e-08, clipnorm=1.0)
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
@@ -116,11 +117,9 @@ model.summary()
 
 # Making Prediction and Saving Model ###########################################################
 
-def generate_text(prompt, model):
-    encodings = tokenizer_gpt(
-        prompt,
-        return_tensors='tf'
-    )
+def generate_text(prompt: str, model: TFGPT2LMHeadModel):
+
+    encodings = tokenizer_gpt(prompt, return_tensors='tf')
 
     input_token_ids = encodings['input_ids']
     attention_mask = encodings['attention_mask']
@@ -139,8 +138,8 @@ def generate_text(prompt, model):
     return tokenizer_gpt.decode(output[0])
 
 
-model.save_weights(model_path)
+#model.save_weights(model_path)
 
 #model.save("my_gpt2")
 
-generate_text("the", model)
+print(generate_text("the", model))
