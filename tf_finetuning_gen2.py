@@ -28,8 +28,11 @@ num_heads = 4
 num_layers = 4
 # ---------------------------------
 
-epochs = 3
+epochs = 20
 learning_rate = 5e-4
+
+model_path      = "tokenizer-gpt/tf-finetuning-gen2.h5"
+tokenizer_path  = "tokenizer-gpt/tokenizer.json"
 
 
 tokenizer = Tokenizer(BPE())
@@ -43,7 +46,7 @@ trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), sp
 
 tokenizer.train(["austen-emma.txt"],trainer)
 
-tokenizer.save("tokenizer-gpt/tokenizer.json")
+tokenizer.save(tokenizer_path)
 
 tokenizer_gpt = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
 
@@ -106,7 +109,6 @@ dataset = dataset.map(train_step)
 
 
 ###################################################
-model_path = "tokenizer-gpt/tf-finetuning-gen2.h5"
 
 if Path(model_path).exists():
     dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
