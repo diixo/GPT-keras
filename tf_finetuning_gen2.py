@@ -58,8 +58,6 @@ tokenizer_gpt.add_special_tokens({
     "mask_token": "<mask>"
 })
 
-print("bos_token_id =", tokenizer_gpt.bos_token_id)
-
 config = GPT2Config(
     n_positions=seq_length,
     n_embd=embedding_dim,
@@ -87,13 +85,10 @@ labels = encodings["input_ids"][:, 1:]
 attention_masks = encodings["attention_mask"][:, :-1]
 
 ds_tf = tf.data.Dataset.from_tensor_slices((train_data, labels, attention_masks))
-ds = ds_tf.shuffle(5000).batch(batch_size, drop_remainder=True)
+dataset = ds_tf.shuffle(5000).batch(batch_size, drop_remainder=True)
 
 def train_step(x, mask, y):
     return {"input_ids": x, "attention_mask": mask}, y
-
-dataset = ds.map(train_step)
-
 
 # Defining Model optimizer, loss metrics and compiling Model ###################################
 model = TFGPT2LMHeadModel(config)
@@ -110,11 +105,11 @@ if Path(model_path).exists():
     model(dummy_input)
     model.load_weights(model_path)
 else:
+    dataset = dataset.map(train_step)
     model.fit(dataset, epochs=epochs)
     model.save_weights(model_path)
     #model.save("my_gpt2")
 
-# --------------------------------------------------
 model.summary()
 
 # Making Prediction and Saving Model ###########################################################
@@ -127,12 +122,6 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel, max_length = seq_length
     model.config.bos_token_id = tokenizer_gpt.bos_token_id
     model.config.eos_token_id = tokenizer_gpt.eos_token_id
 
-    # print(tokenizer_gpt.special_tokens_map)
-    # print(tokenizer_gpt.convert_tokens_to_ids(["<pad>", "<s>", "</s>", "<unk>", "<mask>"]))
-
-    ########################################################
-    # test_ids = tokenizer_gpt.encode("This is a test", add_special_tokens=True)
-    # print(tokenizer_gpt.decode(test_ids, skip_special_tokens=True))
     ########################################################
 
     encodings = tokenizer_gpt([prompt], return_tensors='tf')
