@@ -66,19 +66,6 @@ tokenizer_gpt.add_special_tokens({
     "mask_token": "<mask>"
 })
 
-config = GPT2Config(
-    n_positions=seq_length,
-    n_embd=embedding_dim,
-    n_layer=num_layers,
-    n_head=num_heads,
-    n_inner=dff,
-
-    vocab_size=tokenizer_gpt.vocab_size,
-    bos_token_id=tokenizer_gpt.bos_token_id,
-    eos_token_id=tokenizer_gpt.eos_token_id
-)
-
-
 # Text Data Preprocessing #################################
 
 encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
@@ -95,7 +82,25 @@ def train_step(x, mask, y):
     return {"input_ids": x, "attention_mask": mask}, y
 
 # Defining Model optimizer, loss metrics and compiling Model ###################################
+
+config = GPT2Config(
+    n_positions=seq_length,
+    n_embd=embedding_dim,
+    n_layer=num_layers,
+    n_head=num_heads,
+    n_inner=dff,
+
+    vocab_size=tokenizer_gpt.vocab_size,
+    bos_token_id=tokenizer_gpt.bos_token_id,
+    eos_token_id=tokenizer_gpt.eos_token_id
+)
+
 model = TFGPT2LMHeadModel(config)
+
+model.config.pad_token_id = tokenizer_gpt.pad_token_id
+model.config.bos_token_id = tokenizer_gpt.bos_token_id
+model.config.eos_token_id = tokenizer_gpt.eos_token_id
+
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=1e-08, clipnorm=1.0)
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
@@ -120,12 +125,6 @@ model.summary()
 def generate_text(prompt: str, model: TFGPT2LMHeadModel, max_length = seq_length):
 
     assert(max_length <= seq_length)
-
-    model.config.pad_token_id = tokenizer_gpt.pad_token_id
-    model.config.bos_token_id = tokenizer_gpt.bos_token_id
-    model.config.eos_token_id = tokenizer_gpt.eos_token_id
-
-    ########################################################
 
     encodings = tokenizer_gpt([prompt], return_tensors='tf')
 
