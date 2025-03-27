@@ -14,11 +14,6 @@ from pathlib import Path
 import re
 
 
-def str_tokenize_words(s: str, stopwords=set()):
-    words = re.findall("(\.?\w[\w'\.&]*\w|\w\+*#?)", s)
-    if words: return [w for w in words if w not in stopwords]
-    return []
-
 # ---------- hyperparams ----------
 batch_size = 32
 seq_length = 32
@@ -34,6 +29,19 @@ learning_rate = 5e-4
 model_path      = "tokenizer-gpt/tf-finetuning-gen2.h5"
 tokenizer_path  = "tokenizer-gpt/tokenizer.json"
 
+# ---------------------------------
+
+def str_tokenize_words(s: str, stopwords=set()):
+    words = re.findall("(\.?\w[\w'\.&]*\w|\w\+*#?)", s)
+    if words: return [w for w in words if w not in stopwords]
+    return []
+
+with open("austen-emma.txt", "r", encoding='utf-8') as f:
+    content = f.readlines()
+
+content = [line.strip() for line in content if len(str_tokenize_words(line)) > 4]
+
+# ---------------------------------
 
 tokenizer = Tokenizer(BPE())
 tokenizer.normalizer = Sequence([Lowercase()])
@@ -72,10 +80,6 @@ config = GPT2Config(
 
 
 # Text Data Preprocessing #################################
-with open("austen-emma.txt", "r", encoding='utf-8') as f:
-    content = f.readlines()
-
-content = [line.strip() for line in content if len(str_tokenize_words(line)) > 4]
 
 encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
 
@@ -105,8 +109,7 @@ if Path(model_path).exists():
     model(dummy_input)
     model.load_weights(model_path)
 else:
-    dataset = dataset.map(train_step)
-    model.fit(dataset, epochs=epochs)
+    model.fit(dataset.map(train_step), epochs=epochs)
     model.save_weights(model_path)
     #model.save("my_gpt2")
 
