@@ -86,11 +86,13 @@ train_data = encodings["input_ids"][:, :-1]
 labels = encodings["input_ids"][:, 1:]
 attention_masks = encodings["attention_mask"][:, :-1]
 
-dataset = tf.data.Dataset.from_tensor_slices((train_data, labels, attention_masks))
-dataset = dataset.shuffle(5000).batch(batch_size, drop_remainder=True)
+ds_tf = tf.data.Dataset.from_tensor_slices((train_data, labels, attention_masks))
+ds = ds_tf.shuffle(5000).batch(batch_size, drop_remainder=True)
 
-print("train_data.shape =", train_data.shape)
-print(len(dataset))
+def train_step(x, mask, y):
+    return {"input_ids": x, "attention_mask": mask}, y
+
+dataset = ds.map(train_step)
 
 
 # Defining Model optimizer, loss metrics and compiling Model ###################################
@@ -100,13 +102,6 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=1e-08,
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
 model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
-
-# Обучение с передачей attention_mask
-def train_step(x, mask, y):
-    return {"input_ids": x, "attention_mask": mask}, y
-
-dataset = dataset.map(train_step)
-
 
 ###################################################
 
