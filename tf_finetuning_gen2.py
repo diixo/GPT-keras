@@ -36,11 +36,11 @@ def str_tokenize_words(s: str, stopwords=set()):
     if words: return [w for w in words if w not in stopwords]
     return []
 
-with open("austen-emma.txt", "r", encoding='utf-8') as f:
+with open("tokenizer-gpt/austen-emma.txt", "r", encoding='utf-8') as f:
     content = f.readlines()
 
-content = [line.strip() for line in content if len(str_tokenize_words(line)) > 4]
-
+content = [line.strip() for line in content if len(str_tokenize_words(line)) > 5]
+print(len(content))
 # ---------------------------------
 
 tokenizer = Tokenizer(BPE())
@@ -52,7 +52,7 @@ trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), sp
     "<pad>", "<s>", "</s>", "<unk>", "<mask>"
     ])
 
-tokenizer.train(["austen-emma.txt"],trainer)
+tokenizer.train(["tokenizer-gpt/austen-emma.txt"], trainer)
 
 tokenizer.save(tokenizer_path)
 
