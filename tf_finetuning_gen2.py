@@ -62,7 +62,7 @@ def clean_mask_tokens(encodings, mask_tokens, pad_token_id):
 content = []
 with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     text = f.readlines()
-content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 5])
+content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 4])
 
 
 # with open("tokenizer-gpt/austen.txt", "r", encoding='utf-8') as f:
