@@ -16,14 +16,14 @@ import re
 
 # ---------- hyperparams ----------
 batch_size = 32
-seq_length = 64
+seq_length = 32
 embedding_dim = 96
 dff = 96
 num_heads = 4
 num_layers = 3
 # ---------------------------------
 
-epochs = 3
+epochs = 5
 learning_rate = 3e-4
 
 model_path      = "tokenizer-gpt/tf-finetuning-gen2.h5"
@@ -65,11 +65,11 @@ with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f
 content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 5])
 
 
-with open("tokenizer-gpt/austen.txt", "r", encoding='utf-8') as f:
-    text = f.readlines()
-content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 5])
+# with open("tokenizer-gpt/austen.txt", "r", encoding='utf-8') as f:
+#     text = f.readlines()
+# content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 5])
 
-print("size=", len(content))
+print(f"size={len(content)}")
 # ---------------------------------
 
 tokenizer = Tokenizer(BPE())
@@ -81,7 +81,7 @@ trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), sp
     "<pad>", "<s>", "</s>", "<unk>", "<mask>"
     ])
 
-tokenizer.train(["tokenizer-gpt/austen-emma.txt", "tokenizer-gpt/austen.txt"], trainer)
+tokenizer.train(["tokenizer-gpt/austen-emma.txt"], trainer)
 
 tokenizer.save(tokenizer_path)
 
@@ -137,9 +137,9 @@ config = GPT2Config(
 
 model = TFGPT2LMHeadModel(config)
 
-print("model.config:",
-    f"pad_token_id={model.config.pad_token_id}",
-    f"bos_token_id={model.config.bos_token_id}",
+print(f"model.config: vocab.sz={tokenizer_gpt.vocab_size},",
+    f"pad_token_id={model.config.pad_token_id},",
+    f"bos_token_id={model.config.bos_token_id},",
     f"eos_token_id={model.config.eos_token_id}",
     )
 
