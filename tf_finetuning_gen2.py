@@ -17,13 +17,13 @@ import re
 # ---------- hyperparams ----------
 batch_size = 32
 seq_length = 32
-embedding_dim = 128
-dff = 128
+embedding_dim = 96
+dff = 96
 num_heads = 4
 num_layers = 3
 # ---------------------------------
 
-epochs = 10
+epochs = 5
 learning_rate = 3e-4
 
 model_path      = "tokenizer-gpt/tf-finetuning-gen2.h5"
@@ -59,7 +59,7 @@ def clean_mask_tokens(encodings, mask_tokens, pad_token_id):
     encodings["attention_mask"] = new_attention_mask
 
 # ---------------------------------
-with open("tokenizer-gpt/austen-emma.txt", "r", encoding='utf-8') as f:
+with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     content = f.readlines()
 
 content = [line.strip() for line in content if len(str_tokenize_words(line)) > 5]
