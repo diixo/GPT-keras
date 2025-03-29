@@ -216,8 +216,8 @@ I know and what you would certainly say if my father were not by."
 "I believe it is very true, my dear, indeed," said Mr. Woodhouse,
 with a sigh. "I am afraid I am sometimes very fanciful and troublesome."
 
-"My dearest papa! You do not think I could mean you_, or suppose
-Mr. Knightley to mean you_. What a horrible idea! Oh no! I meant
+"My dearest papa! You do not think I could mean you, or suppose
+Mr. Knightley to mean you. What a horrible idea! Oh no! I meant
 only myself. Mr. Knightley loves to find fault with me, you know 
 in a joke it is all a joke. We always say what we like to one another."
 
@@ -758,7 +758,7 @@ and now loved to talk of the pleasures of her visit, and describe
 the many comforts and wonders of the place. Emma encouraged her
 talkativeness amused by such a picture of another set of beings,
 and enjoying the youthful simplicity which could speak with so much
-exultation of Mrs. Martin's having "_two parlours, two very good parlours,
+exultation of Mrs. Martin's having "two parlours, two very good parlours,
 indeed; one of them quite as large as Mrs. Goddard's drawing-room;
 and of her having an upper maid who had lived five-and-twenty years
 with her; and of their having eight cows, two of them Alderneys,
@@ -968,10 +968,10 @@ air and way of walking as Mr. Knightley. I see the difference
 plain enough. But Mr. Knightley is so very fine a man!"
 
 "Mr. Knightley's air is so remarkably good that it is not fair
-to compare Mr. Martin with him_. You might not see one in a hundred
+to compare Mr. Martin with him. You might not see one in a hundred
 with gentleman so plainly written as in Mr. Knightley. But he is
 not the only gentleman you have been lately used to. What say you
-to Mr. Weston and Mr. Elton? Compare Mr. Martin with either of them_.
+to Mr. Weston and Mr. Elton? Compare Mr. Martin with either of them.
 Compare their manner of carrying themselves; of walking; of speaking;
 of being silent. You must see the difference."
 
@@ -999,7 +999,7 @@ He was a great deal too full of the market to think of any thing
 else which is just as it should be, for a thriving man. What has
 he to do with books? And I have no doubt that he will thrive,
 and be a very rich man in time and his being illiterate and coarse
-need not disturb us_."
+need not disturb us."
 
 "I wonder he did not remember the book" was all Harriet's answer,
 and spoken with a degree of grave displeasure which Emma thought might
@@ -1010,10 +1010,10 @@ Her next beginning was,
 to Mr. Knightley's or Mr. Weston's. They have more gentleness.
 They might be more safely held up as a pattern. There is an openness,
 a quickness, almost a bluntness in Mr. Weston, which every body
-likes in him_, because there is so much good-humour with it but
+likes in him, because there is so much good-humour with it but
 that would not do to be copied. Neither would Mr. Knightley's
 downright, decided, commanding sort of manner, though it suits
-_him very well; his figure, and look, and situation in life seem
+him very well; his figure, and look, and situation in life seem
 to allow it; but if any young man were to set about copying him,
 he would not be sufferable. On the contrary, I think a young man
 might be very safely recommended to take Mr. Elton as a model.
@@ -1111,10 +1111,10 @@ nothing. You never could persuade her to read half so much as you
 wished. You know you could not."
 
 "I dare say," replied Mrs. Weston, smiling, "that I thought
-so then_; but since we have parted, I can never remember Emma's
+so then; but since we have parted, I can never remember Emma's
 omitting to do any thing I wished."
 
-"There is hardly any desiring to refresh such a memory as that_," said
+"There is hardly any desiring to refresh such a memory as that," said
 Mr. Knightley, feelingly; and for a moment or two he had done. "But I,"
 he soon added, "who have had no such charm thrown over my senses,
 must still see, hear, and remember. Emma is spoiled by being the
@@ -1127,15 +1127,15 @@ with her. She inherits her mother's talents, and must have been
 under subjection to her."
 
 "I should have been sorry, Mr. Knightley, to be dependent on
-_your recommendation, had I quitted Mr. Woodhouse's family and wanted
+your recommendation, had I quitted Mr. Woodhouse's family and wanted
 another situation; I do not think you would have spoken a good word for
 me to any body. I am sure you always thought me unfit for the office I held."
 
-"Yes," said he, smiling. "You are better placed here_; very fit
+"Yes," said he, smiling. "You are better placed here; very fit
 for a wife, but not at all for a governess. But you were preparing
 yourself to be an excellent wife all the time you were at Hartfield.
 You might not give Emma such a complete education as your powers would
-seem to promise; but you were receiving a very good education from her_,
+seem to promise; but you were receiving a very good education from her,
 on the very material matrimonial point of submitting your own will,
 and doing as you were bid; and if Weston had asked me to recommend
 him a wife, I should certainly have named Miss Taylor."
@@ -1148,7 +1148,7 @@ and that with every disposition to bear, there will be nothing
 to be borne. We will not despair, however. Weston may grow cross
 from the wantonness of comfort, or his son may plague him."
 
-"I hope not that_. It is not likely. No, Mr. Knightley, do not
+"I hope not that. It is not likely. No, Mr. Knightley, do not
 foretell vexation from that quarter."
 
 "Not I, indeed. I only name possibilities. I do not pretend to Emma's
@@ -1428,7 +1428,7 @@ could bear; and so I never would finish it, to have it apologised
 over as an unfavourable likeness, to every morning visitor in
 Brunswick Square; and, as I said, I did then forswear ever drawing
 any body again. But for Harriet's sake, or rather for my own,
-and as there are no husbands and wives in the case at present_,
+and as there are no husbands and wives in the case at present,
 I will break my resolution now."
 
 Mr. Elton seemed very properly struck and delighted by the idea,
@@ -1666,7 +1666,7 @@ contemplating the letter. For a little while Emma persevered
 in her silence; but beginning to apprehend the bewitching flattery
 of that letter might be too powerful, she thought it best to say,
 
-"I lay it down as a general rule, Harriet, that if a woman doubts_
+"I lay it down as a general rule, Harriet, that if a woman doubts
 as to whether she should accept a man or not, she certainly ought
 to refuse him. If she can hesitate as to 'Yes,' she ought to say
 'No' directly. It is not a state to be safely entered into
@@ -1728,7 +1728,7 @@ good society. I must have given you up."
 "Dear me! How should I ever have borne it! It would have killed
 me never to come to Hartfield any more!"
 
-"Dear affectionate creature! You banished to Abbey-Mill Farm! You_
+"Dear affectionate creature! You banished to Abbey-Mill Farm! You
 confined to the society of the illiterate and vulgar all your life!
 I wonder how the young man could have the assurance to ask it.
 He must have a pretty good opinion of himself."
@@ -2062,7 +2062,7 @@ of their plan to introduce her into what you would call good society.
 After receiving a very indifferent education she is left in
 Mrs. Goddard's hands to shift as she can; to move, in short,
 in Mrs. Goddard's line, to have Mrs. Goddard's acquaintance.
-Her friends evidently thought this good enough for her; and it was_
+Her friends evidently thought this good enough for her; and it was
 good enough. She desired nothing better herself. Till you chose
 to turn her into a friend, her mind had no distaste for her own set,
 nor any ambition beyond it. She was as happy as possible with the
@@ -2442,14 +2442,14 @@ For Miss   , read Miss Smith.
   My first displays the wealth and pomp of kings,
    Lords of the earth! their luxury and ease.
 
-That is court_.
+That is court.
 
   Another view of man, my second brings;
    Behold him there, the monarch of the seas!
 
-That is ship_; plain as it can be. Now for the cream.
+That is ship; plain as it can be. Now for the cream.
 
-  But ah! united, (_courtship_, you know,) what reverse we have!
+  But ah! united, (courtship, you know,) what reverse we have!
    Man's boasted power and freedom, all are flown.
   Lord of the earth and sea, he bends a slave,
    And woman, lovely woman, reigns alone.
@@ -2493,7 +2493,7 @@ just as she ought. Mr. Elton's superiority had very ample acknowledgment.
 I suppose, and believe, and hope it must be so; but otherwise I could
 not have imagined it. It is so much beyond any thing I deserve.
 Mr. Elton, who might marry any body! There cannot be two opinions
-about him_. He is so very superior. Only think of those sweet
+about him. He is so very superior. Only think of those sweet
 verses 'To Miss   .' Dear me, how clever! Could it really
 be meant for me?"
 
@@ -2845,7 +2845,7 @@ Harriet's was
 "Oh, what a sweet house! How very beautiful! There are the yellow
 curtains that Miss Nash admires so much."
 
-"I do not often walk this way now_," said Emma, as they proceeded,
+"I do not often walk this way now," said Emma, as they proceeded,
 "but then there will be an inducement, and I shall gradually get
 intimately acquainted with all the hedges, gates, pools and pollards
 of this part of Highbury."
@@ -2899,7 +2899,7 @@ right in any man's eyes as I am in my father's."
 thought I should ever be like Miss Bates! so silly so satisfied 
 so smiling so prosing so undistinguishing and unfastidious 
 and so apt to tell every thing relative to every body about me,
-I would marry to-morrow. But between us_, I am convinced there never
+I would marry to-morrow. But between us, I am convinced there never
 can be any likeness, except in being unmarried."
 
 "But still, you will be an old maid! and that's so dreadful!"
@@ -3367,7 +3367,7 @@ much my superior in judgment at that period of our lives; but does
 not the lapse of one-and-twenty years bring our understandings
 a good deal nearer?"
 
-"Yes a good deal nearer_."
+"Yes a good deal nearer."
 
 "But still, not near enough to give me a chance of being right,
 if we think differently."
@@ -3907,7 +3907,7 @@ received a different account of Harriet from what had reached her.
 She had sent while dressing, and the answer had been, "Much the same 
 not better."
 
-"_My report from Mrs. Goddard's," said she presently, "was not
+"My report from Mrs. Goddard's," said she presently, "was not
 so pleasant as I had hoped 'Not better' was my answer."
 
 His face lengthened immediately; and his voice was the voice
@@ -4204,10 +4204,10 @@ were less sanguine."
 
 "He ought to come," said Emma. "If he could stay only a couple
 of days, he ought to come; and one can hardly conceive a young man's
-not having it in his power to do as much as that. A young woman_,
+not having it in his power to do as much as that. A young woman,
 if she fall into bad hands, may be teazed, and kept at a distance
 from those she wants to be with; but one cannot comprehend a young
-_man_'s being under such restraint, as not to be able to spend a week
+man's being under such restraint, as not to be able to spend a week
 with his father, if he likes it."
 
 "One ought to be at Enscombe, and know the ways of the family,
@@ -4215,13 +4215,13 @@ before one decides upon what he can do," replied Mrs. Weston.
 "One ought to use the same caution, perhaps, in judging of the
 conduct of any one individual of any one family; but Enscombe,
 I believe, certainly must not be judged by general rules:
-_she is so very unreasonable; and every thing gives way to her."
+she is so very unreasonable; and every thing gives way to her."
 
 "But she is so fond of the nephew: he is so very great a favourite.
 Now, according to my idea of Mrs. Churchill, it would be most natural,
 that while she makes no sacrifice for the comfort of the husband,
 to whom she owes every thing, while she exercises incessant caprice
-towards him_, she should frequently be governed by the nephew,
+towards him, she should frequently be governed by the nephew,
 to whom she owes nothing at all."
 
 "My dearest Emma, do not pretend, with your sweet temper,
@@ -4274,8 +4274,8 @@ he were more afraid of its being a bad sore throat on her account,
 than on Harriet's more anxious that she should escape the infection,
 than that there should be no infection in the complaint. He began
 with great earnestness to entreat her to refrain from visiting
-the sick-chamber again, for the present to entreat her to promise_
-_him not to venture into such hazard till he had seen Mr. Perry
+the sick-chamber again, for the present to entreat her to promise
+him not to venture into such hazard till he had seen Mr. Perry
 and learnt his opinion; and though she tried to laugh it off
 and bring the subject back into its proper course, there was no
 putting an end to his extreme solicitude about her. She was vexed.
@@ -4454,9 +4454,9 @@ could hope that it might belong only to the passing hour.
 Accordingly, with a mixture of the serious and the playful, which she
 hoped would best suit his half and half state, she replied,
 
-"I am very much astonished, Mr. Elton. This to me_! you forget yourself 
+"I am very much astonished, Mr. Elton. This to me! you forget yourself 
 you take me for my friend any message to Miss Smith I shall
-be happy to deliver; but no more of this to me_, if you please."
+be happy to deliver; but no more of this to me, if you please."
 
 "Miss Smith! message to Miss Smith! What could she possibly mean!" 
 And he repeated her words with such assurance of accent, such boastful
@@ -4526,7 +4526,7 @@ yourself particularly to Miss Smith? that you have never thought
 seriously of her?"
 
 "Never, madam," cried he, affronted in his turn: "never, I assure you.
-_I think seriously of Miss Smith! Miss Smith is a very good sort
+I think seriously of Miss Smith! Miss Smith is a very good sort
 of girl; and I should be happy to see her respectably settled.
 I wish her extremely well: and, no doubt, there are men who might not
 object to Every body has their level: but as for myself, I am not,
@@ -4675,9 +4675,9 @@ Emma was obliged in common honesty to stop and admit that her own
 behaviour to him had been so complaisant and obliging, so full of
 courtesy and attention, as (supposing her real motive unperceived)
 might warrant a man of ordinary observation and delicacy,
-like Mr. Elton, in fancying himself a very decided favourite. If she_
+like Mr. Elton, in fancying himself a very decided favourite. If she
 had so misinterpreted his feelings, she had little right to wonder
-that he_, with self-interest to blind him, should have mistaken hers.
+that he, with self-interest to blind him, should have mistaken hers.
 
 The first error and the worst lay at her door. It was foolish,
 it was wrong, to take so active a part in bringing any two
@@ -4874,7 +4874,7 @@ Harriet did think him all perfection, and maintained the non-existence
 of any body equal to him in person or goodness and did, in truth,
 prove herself more resolutely in love than Emma had foreseen;
 but yet it appeared to her so natural, so inevitable to strive
-against an inclination of that sort unrequited_, that she could not
+against an inclination of that sort unrequited, that she could not
 comprehend its continuing very long in equal force.
 
 If Mr. Elton, on his return, made his own indifference as evident
@@ -5726,7 +5726,7 @@ at her grandmother's, it must have been a real indulgence."
 "I am happy you approved," said Emma, smiling; "but I hope I am
 not often deficient in what is due to guests at Hartfield."
 
-"No, my dear," said her father instantly; "_that I am sure you
+"No, my dear," said her father instantly; "that I am sure you
 are not. There is nobody half so attentive and civil as you are.
 If any thing, you are too attentive. The muffin last night if it
 had been handed round once, I think it would have been enough."
@@ -6186,7 +6186,7 @@ handsome enough to look plain, probably, by Harriet's side.
 As to connexion, there Emma was perfectly easy; persuaded,
 that after all his own vaunted claims and disdain of Harriet,
 he had done nothing. On that article, truth seemed attainable.
-_What she was, must be uncertain; but who she was, might be found out;
+What she was, must be uncertain; but who she was, might be found out;
 and setting aside the 10,000 l., it did not appear that she was at
 all Harriet's superior. She brought no name, no blood, no alliance.
 Miss Hawkins was the youngest of the two daughters of a Bristol 
@@ -6200,8 +6200,8 @@ in the law line nothing more distinctly honourable was hazarded
 of him, than that he was in the law line; and with him the daughter
 had lived. Emma guessed him to be the drudge of some attorney,
 and too stupid to rise. And all the grandeur of the connexion
-seemed dependent on the elder sister, who was very well married_,
-to a gentleman in a great way_, near Bristol, who kept two carriages!
+seemed dependent on the elder sister, who was very well married,
+to a gentleman in a great way, near Bristol, who kept two carriages!
 That was the wind-up of the history; that was the glory of
 Miss Hawkins.
 
@@ -6216,7 +6216,7 @@ having once begun, would be always in love. And now, poor girl!
 she was considerably worse from this reappearance of Mr. Elton.
 She was always having a glimpse of him somewhere or other. Emma saw
 him only once; but two or three times every day Harriet was sure
-_just to meet with him, or just to miss him, just to hear his voice,
+just to meet with him, or just to miss him, just to hear his voice,
 or see his shoulder, just to have something occur to preserve him
 in her fancy, in all the favouring warmth of surprize and conjecture.
 She was, moreover, perpetually hearing about him; for, excepting when
@@ -6278,7 +6278,7 @@ CHAPTER V
 Small heart had Harriet for visiting. Only half an hour before her
 friend called for her at Mrs. Goddard's, her evil stars had led
 her to the very spot where, at that moment, a trunk, directed to
-_The Rev. Philip Elton_, White-Hart_, Bath_, was to be seen under the
+The Rev. Philip Elton, White-Hart, Bath, was to be seen under the
 operation of being lifted into the butcher's cart, which was to
 convey it to where the coaches past; and every thing in this world,
 excepting that trunk and the direction, was consequently a blank.
@@ -6322,7 +6322,7 @@ passed six weeks not six months ago! Emma could not but picture
 it all, and feel how justly they might resent, how naturally
 Harriet must suffer. It was a bad business. She would have given
 a great deal, or endured a great deal, to have had the Martins
-in a higher rank of life. They were so deserving, that a little_
+in a higher rank of life. They were so deserving, that a little
 higher should have been enough: but as it was, how could she have
 done otherwise? Impossible! She could not repent. They must
 be separated; but there was a great deal of pain in the process 
@@ -6380,7 +6380,7 @@ from his wife.
 the girls."
 
 "Well, well, I am ready;" and turning again to Emma, "but you must
-not be expecting such a very fine young man; you have only had my_
+not be expecting such a very fine young man; you have only had my
 account you know; I dare say he is really nothing extraordinary:" 
 though his own sparkling eyes at the moment were speaking a very
 different conviction.
@@ -6505,7 +6505,7 @@ more than a very tolerably well-looking woman of a certain age;
 I did not know that I was to find a pretty young woman in Mrs. Weston."
 
 "You cannot see too much perfection in Mrs. Weston for my feelings,"
-said Emma; "were you to guess her to be eighteen_, I should listen
+said Emma; "were you to guess her to be eighteen, I should listen
 with pleasure; but she would be ready to quarrel with you for using
 such words. Don't let her imagine that you have spoken of her as
 a pretty young woman."
@@ -6777,7 +6777,7 @@ They went in; and while the sleek, well-tied parcels of "Men's Beavers"
 and "York Tan" were bringing down and displaying on the counter,
 he said "But I beg your pardon, Miss Woodhouse, you were speaking
 to me, you were saying something at the very moment of this burst
-of my amor patriae_. Do not let me lose it. I assure you the utmost
+of my amor patriae. Do not let me lose it. I assure you the utmost
 stretch of public fame would not make me amends for the loss of any
 happiness in private life."
 
@@ -6811,7 +6811,7 @@ is destined to be?"
 what to say when you speak of Miss Fairfax's situation in life.
 I will move a little farther off."
 
-"I certainly do forget to think of her_," said Emma, "as having ever
+"I certainly do forget to think of her," said Emma, "as having ever
 been any thing but my friend and my dearest friend."
 
 He looked as if he fully understood and honoured such a sentiment.
@@ -7092,7 +7092,7 @@ not married, you would have staid at home with me."
 it is incumbent on me to supply her place, if I can; and I will
 step to Mrs. Goddard in a moment, if you wish it."
 
-But the idea of any thing to be done in a moment_, was increasing,
+But the idea of any thing to be done in a moment, was increasing,
 not lessening, Mr. Woodhouse's agitation. The ladies knew better
 how to allay it. Mr. Weston must be quiet, and every thing
 deliberately arranged.
@@ -7105,7 +7105,7 @@ there must be an answer written to Mrs. Cole."
 
 "You will make my excuses, my dear, as civilly as possible. You will
 say that I am quite an invalid, and go no where, and therefore must
-decline their obliging invitation; beginning with my compliments_,
+decline their obliging invitation; beginning with my compliments,
 of course. But you will do every thing right. I need not tell you
 what is to be done. We must remember to let James know that the carriage
 will be wanted on Tuesday. I shall have no fears for you with him.
@@ -7234,7 +7234,7 @@ consciousness or bustle when people come in a way which they know
 to be beneath them. You think you carry it off very well, I dare say,
 but with you it is a sort of bravado, an air of affected unconcern;
 I always observe it whenever I meet you under those circumstances.
-_Now you have nothing to try for. You are not afraid of being
+Now you have nothing to try for. You are not afraid of being
 supposed ashamed. You are not striving to look taller than any
 body else. Now I shall really be very happy to walk into the same
 room with you."
@@ -7351,7 +7351,7 @@ is more like a young woman's scheme than an elderly man's. It
 is Mrs. Dixon, I dare say. I told you that your suspicions would
 guide mine."
 
-"If so, you must extend your suspicions and comprehend Mr_. Dixon
+"If so, you must extend your suspicions and comprehend Mr. Dixon
 in them."
 
 "Mr. Dixon. Very well. Yes, I immediately perceive that it must
@@ -7362,7 +7362,7 @@ other day, you know, of his being so warm an admirer of her performance."
 had entertained before. I do not mean to reflect upon the good
 intentions of either Mr. Dixon or Miss Fairfax, but I cannot help
 suspecting either that, after making his proposals to her friend,
-he had the misfortune to fall in love with her_, or that he became
+he had the misfortune to fall in love with her, or that he became
 conscious of a little attachment on her side. One might guess
 twenty things without guessing exactly the right; but I am sure
 there must be a particular cause for her chusing to come to Highbury
@@ -7503,7 +7503,7 @@ when days were fixed, and invitations accepted, it was an even
 chance that Mrs. Churchill were not in health and spirits for going;
 that they made a point of visiting no fresh person; and that,
 though he had his separate engagements, it was not without difficulty,
-without considerable address at times_, that he could get away,
+without considerable address at times, that he could get away,
 or introduce an acquaintance for a night.
 
 She saw that Enscombe could not satisfy, and that Highbury,
@@ -7516,7 +7516,7 @@ one or two points) he could with time persuade her to any thing.
 One of those points on which his influence failed, he then mentioned.
 He had wanted very much to go abroad had been very eager indeed
 to be allowed to travel but she would not hear of it. This had
-happened the year before. Now_, he said, he was beginning to have
+happened the year before. Now, he said, he was beginning to have
 no longer the same wish.
 
 The unpersuadable point, which he did not mention, Emma guessed
@@ -8325,7 +8325,7 @@ If she does wrong, she ought to feel it."
 
 "She is not entirely without it, I think."
 
-"I do not see much sign of it. She is playing Robin Adair_
+"I do not see much sign of it. She is playing Robin Adair
 at this moment his favourite."
 
 Shortly afterwards Miss Bates, passing near the window,
@@ -8370,7 +8370,7 @@ He cut her short with,
 "Oh! dear, Kingston are you? Mrs. Cole was saying the other day
 she wanted something from Kingston."
 
-"Mrs. Cole has servants to send. Can I do any thing for you_?"
+"Mrs. Cole has servants to send. Can I do any thing for you?"
 
 "No, I thank you. But do come in. Who do you think is here? 
 Miss Woodhouse and Miss Smith; so kind as to call to hear the
@@ -8491,7 +8491,7 @@ It can be allowable only as the thought of the moment."
 
 Somebody said that Miss Gilbert was expected at her brother's,
 and must be invited with the rest. Somebody else believed
-_Mrs_. Gilbert would have danced the other evening, if she had
+Mrs. Gilbert would have danced the other evening, if she had
 been asked. A word was put in for a second young Cox; and at last,
 Mr. Weston naming one family of cousins who must be included,
 and another of very old acquaintance who could not be left out,
@@ -8581,7 +8581,7 @@ no objection to it, provided you are satisfied. This is what we
 all feel. Oh! you were perfectly right! Ten couple, in either of
 the Randalls rooms, would have been insufferable! Dreadful! I felt
 how right you were the whole time, but was too anxious for securing
-_any thing to like to yield. Is not it a good exchange? You consent 
+any thing to like to yield. Is not it a good exchange? You consent 
 I hope you consent?"
 
 "It appears to me a plan that nobody can object to, if Mr. and
@@ -8967,7 +8967,7 @@ to speak, therefore, in the hope of putting it by, she calmly said,
 He was silent. She believed he was looking at her; probably reflecting
 on what she had said, and trying to understand the manner.
 She heard him sigh. It was natural for him to feel that he had
-_cause to sigh. He could not believe her to be encouraging him.
+cause to sigh. He could not believe her to be encouraging him.
 A few awkward moments passed, and he sat down again; and in a more
 determined manner said,
 
@@ -9063,7 +9063,7 @@ so much, and, as she sat drawing or working, forming a thousand
 amusing schemes for the progress and close of their attachment,
 fancying interesting dialogues, and inventing elegant letters;
 the conclusion of every imaginary declaration on his side was that she
-_refused him_. Their affection was always to subside into friendship.
+refused him. Their affection was always to subside into friendship.
 Every thing tender and charming was to mark their parting;
 but still they were to part. When she became sensible of this,
 it struck her that she could not be very much in love; for in spite
@@ -9071,7 +9071,7 @@ of her previous and fixed determination never to quit her father,
 never to marry, a strong attachment certainly must produce more
 of a struggle than she could foresee in her own feelings.
 
-"I do not find myself making any use of the word sacrifice_," said she. 
+"I do not find myself making any use of the word sacrifice," said she. 
 "In not one of all my clever replies, my delicate negatives,
 is there any allusion to making a sacrifice. I do suspect that he
 is not really necessary to my happiness. So much the better.
@@ -9080,7 +9080,7 @@ quite enough in love. I should be sorry to be more."
 
 Upon the whole, she was equally contented with her view of his feelings.
 
-"_He is undoubtedly very much in love every thing denotes it very much
+"He is undoubtedly very much in love every thing denotes it very much
 in love indeed! and when he comes again, if his affection continue,
 I must be on my guard not to encourage it. It would be most
 inexcusable to do otherwise, as my own mind is quite made up.
@@ -9185,7 +9185,7 @@ At last Emma attacked her on another ground.
 
 "Your allowing yourself to be so occupied and so unhappy about
 Mr. Elton's marrying, Harriet, is the strongest reproach you can
-make me_. You could not give me a greater reproof for the mistake I
+make me. You could not give me a greater reproof for the mistake I
 fell into. It was all my doing, I know. I have not forgotten it,
 I assure you. Deceived myself, I did very miserably deceive you 
 and it will be a painful reflection to me for ever. Do not imagine
@@ -9255,7 +9255,7 @@ the business might be gone through as soon as possible.
 
 She could not enter the house again, could not be in the same room
 to which she had with such vain artifice retreated three months ago,
-to lace up her boot, without recollecting_. A thousand vexatious
+to lace up her boot, without recollecting. A thousand vexatious
 thoughts would recur. Compliments, charades, and horrible blunders;
 and it was not to be supposed that poor Harriet should not be
 recollecting too; but she behaved very well, and was only rather
@@ -9446,7 +9446,7 @@ where the waters do agree, it is quite wonderful the relief
 they give. In my Bath life, I have seen such instances of it!
 And it is so cheerful a place, that it could not fail of being of
 use to Mr. Woodhouse's spirits, which, I understand, are sometimes
-much depressed. And as to its recommendations to you_, I fancy I
+much depressed. And as to its recommendations to you, I fancy I
 need not take much pains to dwell on them. The advantages of Bath
 to the young are pretty generally understood. It would be a charming
 introduction for you, who have lived so secluded a life; and I could
@@ -9490,10 +9490,10 @@ to Mr. E. when he was speaking of my future home, and expressing
 his fears lest the retirement of it should be disagreeable;
 and the inferiority of the house too knowing what I had been
 accustomed to of course he was not wholly without apprehension.
-When he was speaking of it in that way, I honestly said that the_
-_world I could give up parties, balls, plays for I had no fear
+When he was speaking of it in that way, I honestly said that the
+world I could give up parties, balls, plays for I had no fear
 of retirement. Blessed with so many resources within myself,
-the world was not necessary to me_. I could do very well without it.
+the world was not necessary to me. I could do very well without it.
 To those who had no resources it was a different thing; but my
 resources made me quite independent. And as to smaller-sized rooms
 than I had been used to, I really could not give it a thought.
@@ -9514,9 +9514,9 @@ may be pardoned, in consideration of the motive."
 to find myself in such a circle. I hope we shall have many sweet
 little concerts together. I think, Miss Woodhouse, you and I
 must establish a musical club, and have regular weekly meetings
-at your house, or ours. Will not it be a good plan? If we_
+at your house, or ours. Will not it be a good plan? If we
 exert ourselves, I think we shall not be long in want of allies.
-Something of that nature would be particularly desirable for me_,
+Something of that nature would be particularly desirable for me,
 as an inducement to keep me in practice; for married women, you know 
 there is a sad story against them, in general. They are but too apt
 to give up music."
@@ -9582,7 +9582,7 @@ could breathe.
 had supposed. Absolutely insufferable! Knightley! I could not
 have believed it. Knightley! never seen him in her life before,
 and call him Knightley! and discover that he is a gentleman!
-A little upstart, vulgar being, with her Mr. E., and her caro sposo_,
+A little upstart, vulgar being, with her Mr. E., and her caro sposo,
 and her resources, and all her airs of pert pretension and
 underbred finery. Actually to discover that Mr. Knightley is
 a gentleman! I doubt whether he will return the compliment,
@@ -9623,13 +9623,13 @@ But I do not like the corner into Vicarage Lane."
 to her if possible. It was being very deficient."
 
 "But, my dear papa, you are no friend to matrimony; and therefore
-why should you be so anxious to pay your respects to a bride_?
-It ought to be no recommendation to you_. It is encouraging people
+why should you be so anxious to pay your respects to a bride?
+It ought to be no recommendation to you. It is encouraging people
 to marry if you make so much of them."
 
 "No, my dear, I never encouraged any body to marry, but I would
 always wish to pay every proper attention to a lady and a bride,
-especially, is never to be neglected. More is avowedly due to her_.
+especially, is never to be neglected. More is avowedly due to her.
 A bride, you know, my dear, is always the first in company,
 let the others be who they may."
 
@@ -9642,7 +9642,7 @@ matter of mere common politeness and good-breeding,
 and has nothing to do with any encouragement to people to marry."
 
 Emma had done. Her father was growing nervous, and could not
-understand her_. Her mind returned to Mrs. Elton's offences,
+understand her. Her mind returned to Mrs. Elton's offences,
 and long, very long, did they occupy her.
 
 
@@ -9749,7 +9749,7 @@ Jane Fairfax, at any time, the least inconvenient. I should be
 extremely displeased if Wright were to send us up such a dinner,
 as could make me regret having asked more than Jane Fairfax
 to partake of it. I have no idea of that sort of thing. It is
-not likely that I should_, considering what I have been used to.
+not likely that I should, considering what I have been used to.
 My greatest danger, perhaps, in housekeeping, may be quite the
 other way, in doing too much, and being too careless of expense.
 Maple Grove will probably be my model more than it ought to be 
@@ -9815,7 +9815,7 @@ to exist; but still she had declined it!
 this invitation," was Emma's conclusion. "She must be under some
 sort of penance, inflicted either by the Campbells or herself.
 There is great fear, great caution, great resolution somewhere. 
-She is not to be with the Dixons_. The decree is issued by somebody.
+She is not to be with the Dixons. The decree is issued by somebody.
 But why must she consent to be with the Eltons? Here is quite a
 separate puzzle."
 
@@ -10163,7 +10163,7 @@ to take care of you."
 
 Jane very patiently assured her that she had not caught any cold.
 
-"Oh! do not tell me_. You really are a very sad girl, and do not
+"Oh! do not tell me. You really are a very sad girl, and do not
 know how to take care of yourself. To the post-office indeed!
 Mrs. Weston, did you ever hear the like? You and I must positively
 exert our authority."
@@ -10294,7 +10294,7 @@ to be allowed to hand her into the dining-parlour, was saying
 Jane's solicitude about fetching her own letters had not escaped Emma.
 She had heard and seen it all; and felt some curiosity to know
 whether the wet walk of this morning had produced any. She suspected
-that it had_; that it would not have been so resolutely encountered
+that it had; that it would not have been so resolutely encountered
 but in full expectation of hearing from some one very dear,
 and that it had not been in vain. She thought there was an air
 of greater happiness than usual a glow both of complexion and spirits.
@@ -10475,7 +10475,7 @@ the world! Could he by a touch of his finger have instantly taken
 back his wife, there would have been a motive; but his coming would
 probably prolong rather than break up the party. John Knightley
 looked at him with amazement, then shrugged his shoulders, and said,
-"I could not have believed it even of him_."
+"I could not have believed it even of him."
 
 Mr. Weston meanwhile, perfectly unsuspicious of the indignation
 he was exciting, happy and cheerful as usual, and with all
@@ -10586,7 +10586,7 @@ but twice in one week he and Mr. Bragge went to London and back again
 with four horses."
 
 "The evil of the distance from Enscombe," said Mr. Weston, "is, that
-Mrs. Churchill, as we understand_, has not been able to leave the
+Mrs. Churchill, as we understand, has not been able to leave the
 sofa for a week together. In Frank's last letter she complained,
 he said, of being too weak to get into her conservatory without having
 both his arm and his uncle's! This, you know, speaks a great degree
@@ -11012,7 +11012,7 @@ but not general friendship, made a man what he ought to be.
 She could fancy such a man. The whole party walked about,
 and looked, and praised again; and then, having nothing else to do,
 formed a sort of half-circle round the fire, to observe in their
-various modes, till other subjects were started, that, though May_,
+various modes, till other subjects were started, that, though May,
 a fire in the evening was still very pleasant.
 
 Emma found that it was not Mr. Weston's fault that the number
@@ -11077,7 +11077,7 @@ so extremely expeditious! I believe we drive faster than any body.
 What a pleasure it is to send one's carriage for a friend! 
 I understand you were so kind as to offer, but another time it
 will be quite unnecessary. You may be very sure I shall always
-take care of them_."
+take care of them."
 
 Miss Bates and Miss Fairfax, escorted by the two gentlemen,
 walked into the room; and Mrs. Elton seemed to think it as much
@@ -11379,7 +11379,7 @@ share of censure.
 is it that they are your enemies?"
 
 He looked with smiling penetration; and, on receiving
-no answer, added, "_She ought not to be angry with you, I suspect,
+no answer, added, "She ought not to be angry with you, I suspect,
 whatever he may be. To that surmise, you say nothing, of course;
 but confess, Emma, that you did want him to marry Harriet."
 
@@ -11619,7 +11619,7 @@ quite as much as her words, for something more than ordinary.
 
 "It is my duty, and I am sure it is my wish," she continued,
 "to have no reserves with you on this subject. As I am happily
-quite an altered creature in one respect_, it is very fit that you
+quite an altered creature in one respect, it is very fit that you
 should have the satisfaction of knowing it. I do not want to say
 more than is necessary I am too much ashamed of having given way
 as I have done, and I dare say you understand me."
@@ -11649,8 +11649,8 @@ Cannot you guess what this parcel holds?" said she, with a conscious look.
 "No I cannot call them gifts; but they are things that I have
 valued very much."
 
-She held the parcel towards her, and Emma read the words Most_
-_precious treasures on the top. Her curiosity was greatly excited.
+She held the parcel towards her, and Emma read the words Most
+precious treasures on the top. Her curiosity was greatly excited.
 Harriet unfolded the parcel, and she looked on with impatience.
 Within abundance of silver paper was a pretty little Tunbridge-ware box,
 which Harriet opened: it was well lined with the softest cotton;
@@ -11705,7 +11705,7 @@ of an old pencil, the part without any lead.
 "This was really his," said Harriet. "Do not you remember
 one morning? no, I dare say you do not. But one morning I forget
 exactly the day but perhaps it was the Tuesday or Wednesday before
-_that evening_, he wanted to make a memorandum in his pocket-book;
+that evening, he wanted to make a memorandum in his pocket-book;
 it was about spruce-beer. Mr. Knightley had been telling him
 something about brewing spruce-beer, and he wanted to put it down;
 but when he took out his pencil, there was so little lead that he
@@ -11750,7 +11750,7 @@ There it goes, and there is an end, thank Heaven! of Mr. Elton."
 
 She had soon afterwards reason to believe that the beginning was
 already made, and could not but hope that the gipsy, though she had
-_told no fortune, might be proved to have made Harriet's. About a
+told no fortune, might be proved to have made Harriet's. About a
 fortnight after the alarm, they came to a sufficient explanation,
 and quite undesignedly. Emma was not thinking of it at the moment,
 which made the information she received more valuable.
@@ -11824,7 +11824,7 @@ do seem objections and obstacles of a very serious nature;
 but yet, Harriet, more wonderful things have taken place, there have
 been matches of greater disparity. But take care of yourself.
 I would not have you too sanguine; though, however it may end,
-be assured your raising your thoughts to him_, is a mark of good taste
+be assured your raising your thoughts to him, is a mark of good taste
 which I shall always know how to value."
 
 Harriet kissed her hand in silent and submissive gratitude.
@@ -11862,7 +11862,7 @@ were symptoms of intelligence between them he thought so at least
 symptoms of admiration on his side, which, having once observed,
 he could not persuade himself to think entirely void of meaning,
 however he might wish to escape any of Emma's errors of imagination.
-_She was not present when the suspicion first arose. He was dining
+She was not present when the suspicion first arose. He was dining
 with the Randalls family, and Jane, at the Eltons'; and he had
 seen a look, more than a single look, at Miss Fairfax, which,
 from the admirer of Miss Woodhouse, seemed somewhat out of place.
@@ -12017,7 +12017,7 @@ she should have looked on the table instead of looking just across,
 for it was not mixed; and Harriet, eager after every fresh word,
 and finding out none, directly took it up, and fell to work.
 She was sitting by Mr. Knightley, and turned to him for help.
-The word was blunder_; and as Harriet exultingly proclaimed it,
+The word was blunder; and as Harriet exultingly proclaimed it,
 there was a blush on Jane's cheek which gave it a meaning not
 otherwise ostensible. Mr. Knightley connected it with the dream;
 but how it could all be, was beyond his comprehension.
@@ -12045,7 +12045,7 @@ directly handed over the word to Miss Fairfax, and with a particular
 degree of sedate civility entreated her to study it. Mr. Knightley's
 excessive curiosity to know what this word might be, made him seize
 every possible moment for darting his eye towards it, and it was
-not long before he saw it to be Dixon_. Jane Fairfax's perception
+not long before he saw it to be Dixon. Jane Fairfax's perception
 seemed to accompany his; her comprehension was certainly more equal
 to the covert meaning, the superior intelligence, of those five letters
 so arranged. She was evidently displeased; looked up, and seeing
@@ -12246,7 +12246,7 @@ with me."
 you to give any other invitations."
 
 "Oh! now you are looking very sly. But consider you need not be afraid
-of delegating power to me_. I am no young lady on her preferment.
+of delegating power to me. I am no young lady on her preferment.
 Married women, you know, may be safely authorised. It is my party.
 Leave it all to me. I will invite your guests."
 
@@ -12576,7 +12576,7 @@ accomplished some views of St. Mark's Place, Venice, when Frank
 Churchill entered the room. Emma had not been thinking of him,
 she had forgotten to think of him but she was very glad to see him.
 Mrs. Weston would be at ease. The black mare was blameless;
-_they were right who had named Mrs. Churchill as the cause.
+they were right who had named Mrs. Churchill as the cause.
 He had been detained by a temporary increase of illness in her;
 a nervous seizure, which had lasted some hours and he had quite given
 up every thought of coming, till very late; and had he known how hot
@@ -12641,7 +12641,7 @@ and would leave it to-morrow, if I could."
 "You are sick of prosperity and indulgence. Cannot you invent
 a few hardships for yourself, and be contented to stay?"
 
-"_I sick of prosperity and indulgence! You are quite mistaken.
+"I sick of prosperity and indulgence! You are quite mistaken.
 I do not look upon myself as either prosperous or indulged. I am
 thwarted in every thing material. I do not consider myself at all
 a fortunate person."
@@ -12805,14 +12805,14 @@ whose thoughts I might not be afraid of knowing."
 "It is a sort of thing," cried Mrs. Elton emphatically,
 "which I should not have thought myself privileged to
 inquire into. Though, perhaps, as the Chaperon of the party 
-_I never was in any circle exploring parties young ladies married women "
+I never was in any circle exploring parties young ladies married women "
 
 Her mutterings were chiefly to her husband; and he murmured,
 in reply,
 
 "Very true, my love, very true. Exactly so, indeed quite unheard of 
 but some ladies say any thing. Better pass it off as a joke.
-Every body knows what is due to you_."
+Every body knows what is due to you."
 
 "It will not do," whispered Frank to Emma; "they are most
 of them affronted. I will attack them with more address.
@@ -12876,7 +12876,7 @@ has done very well for himself; but he must have knocked up every
 body else. Perfection should not have come quite so soon."
 
 "Oh! for myself, I protest I must be excused," said Mrs. Elton;
-"_I really cannot attempt I am not at all fond of the sort of thing.
+"I really cannot attempt I am not at all fond of the sort of thing.
 I had an acrostic once sent to me upon my own name, which I was not
 at all pleased with. I knew who it came from. An abominable puppy! 
 You know who I mean (nodding to her husband). These kind of things
@@ -12890,8 +12890,8 @@ and when to hold my tongue. Pass us, if you please, Mr. Churchill.
 Pass Mr. E., Knightley, Jane, and myself. We have nothing clever to say 
 not one of us.
 
-"Yes, yes, pray pass me_," added her husband, with a sort of
-sneering consciousness; "_I have nothing to say that can entertain
+"Yes, yes, pray pass me," added her husband, with a sort of
+sneering consciousness; "I have nothing to say that can entertain
 Miss Woodhouse, or any other young lady. An old married man 
 quite good for nothing. Shall we walk, Augusta?"
 
@@ -13015,7 +13015,7 @@ your compassion. It was badly done, indeed! You, whom she had known
 from an infant, whom she had seen grow up from a period when her
 notice was an honour, to have you now, in thoughtless spirits,
 and the pride of the moment, laugh at her, humble her and before
-her niece, too and before others, many of whom (certainly some_,)
+her niece, too and before others, many of whom (certainly some,)
 would be entirely guided by your treatment of her. This is not
 pleasant to you, Emma and it is very far from pleasant to me;
 but I must, I will, I will tell you truths while I can;
@@ -13064,7 +13064,7 @@ ways, might be looking back on it with pleasure; but in her view it
 was a morning more completely misspent, more totally bare of rational
 satisfaction at the time, and more to be abhorred in recollection,
 than any she had ever passed. A whole evening of back-gammon with
-her father, was felicity to it. There_, indeed, lay real pleasure,
+her father, was felicity to it. There, indeed, lay real pleasure,
 for there she was giving up the sweetest hours of the twenty-four
 to his comfort; and feeling that, unmerited as might be the degree
 of his fond affection and confiding esteem, she could not, in her
@@ -13566,7 +13566,7 @@ about the meadows, at some distance from Highbury, on the afternoon
 of the very day on which she had, under the plea of being unequal
 to any exercise, so peremptorily refused to go out with her in
 the carriage, she could have no doubt putting every thing together 
-that Jane was resolved to receive no kindness from her_. She was sorry,
+that Jane was resolved to receive no kindness from her. She was sorry,
 very sorry. Her heart was grieved for a state which seemed
 but the more pitiable from this sort of irritation of spirits,
 inconsistency of action, and inequality of powers; and it mortified
@@ -13595,7 +13595,7 @@ be possible. Mrs. Weston wants to see you. She must see you."
 "Is she unwell?"
 
 "No, no, not at all only a little agitated. She would have
-ordered the carriage, and come to you, but she must see you alone_,
+ordered the carriage, and come to you, but she must see you alone,
 and that you know (nodding towards her father) Humph! Can you come?"
 
 "Certainly. This moment, if you please. It is impossible to
@@ -13739,11 +13739,11 @@ can at all comprehend it. What! engaged to her all the winter
 before either of them came to Highbury?"
 
 "Engaged since October, secretly engaged. It has hurt me,
-Emma, very much. It has hurt his father equally. Some part_
+Emma, very much. It has hurt his father equally. Some part
 of his conduct we cannot excuse."
 
 Emma pondered a moment, and then replied, "I will not pretend
-_not to understand you; and to give you all the relief in my power,
+not to understand you; and to give you all the relief in my power,
 be assured that no such effect has followed his attentions to me,
 as you are apprehensive of."
 
@@ -13770,7 +13770,7 @@ might be attached to each other and we were persuaded that it was so.
 Imagine what we have been feeling on your account."
 
 "I have escaped; and that I should escape, may be a matter of
-grateful wonder to you and myself. But this does not acquit him_,
+grateful wonder to you and myself. But this does not acquit him,
 Mrs. Weston; and I must say, that I think him greatly to blame.
 What right had he to come among us with affection and faith engaged,
 and with manners so very disengaged? What right had he to endeavour
@@ -13837,7 +13837,7 @@ I am sincerely anxious for its all turning out well, and ready
 to hope that it may. They must both have suffered a great deal
 under such a system of secresy and concealment."
 
-"_His sufferings," replied Emma dryly, "do not appear to have done
+"His sufferings," replied Emma dryly, "do not appear to have done
 him much harm. Well, and how did Mr. Churchill take it?"
 
 "Most favourably for his nephew gave his consent with scarcely
@@ -13949,7 +13949,7 @@ CHAPTER XI
 tormenting ideas which Emma could not get rid of, and which constituted
 the real misery of the business to her. Frank Churchill had behaved
 very ill by herself very ill in many ways, but it was not so much
-_his behaviour as her own_, which made her so angry with him.
+his behaviour as her own, which made her so angry with him.
 It was the scrape which he had drawn her into on Harriet's account,
 that gave the deepest hue to his offence. Poor Harriet! to be a second
 time the dupe of her misconceptions and flattery. Mr. Knightley
@@ -14085,7 +14085,7 @@ to dare to think of him. At first, if you had not told me
 that more wonderful things had happened; that there had been
 matches of greater disparity (those were your very words); 
 I should not have dared to give way to I should not have thought
-it possible But if you_, who had been always acquainted with him "
+it possible But if you, who had been always acquainted with him "
 
 "Harriet!" cried Emma, collecting herself resolutely "Let us
 understand each other now, without the possibility of farther mistake.
@@ -14245,7 +14245,7 @@ being at Hartfield though, when he first came in, he had said
 that he could not stay five minutes and his having told her,
 during their conversation, that though he must go to London,
 it was very much against his inclination that he left home at all,
-which was much more (as Emma felt) than he had acknowledged to her_.
+which was much more (as Emma felt) than he had acknowledged to her.
 The superior degree of confidence towards Harriet, which this one
 article marked, gave her severe pain.
 
@@ -14406,7 +14406,7 @@ presented themselves, she could not presume to indulge them.
 Harriet Smith might think herself not unworthy of being peculiarly,
 exclusively, passionately loved by Mr. Knightley. She could not.
 She could not flatter herself with any idea of blindness in his attachment
-to her_. She had received a very recent proof of its impartiality. 
+to her. She had received a very recent proof of its impartiality. 
 How shocked had he been by her behaviour to Miss Bates! How directly,
 how strongly had he expressed himself to her on the subject! Not too
 strongly for the offence but far, far too strongly to issue from
@@ -14415,7 +14415,7 @@ She had no hope, nothing to deserve the name of hope, that he could
 have that sort of affection for herself which was now in question;
 but there was a hope (at times a slight one, at times much stronger,)
 that Harriet might have deceived herself, and be overrating his
-regard for her_. Wish it she must, for his sake be the consequence
+regard for her. Wish it she must, for his sake be the consequence
 nothing to herself, but his remaining single all his life.
 Could she be secure of that, indeed, of his never marrying at all,
 she believed she should be perfectly satisfied. Let him but continue
@@ -14540,7 +14540,7 @@ contributed to make her unhappy."
 probably had something of that in her thoughts, when alluding
 to the misunderstandings which he had given us hints of before.
 One natural consequence of the evil she had involved herself in,"
-she said, "was that of making her unreasonable_. The consciousness
+she said, "was that of making her unreasonable. The consciousness
 of having done amiss, had exposed her to a thousand inquietudes,
 and made her captious and irritable to a degree that must have been 
 that had been hard for him to bear. 'I did not make the allowances,'
@@ -14731,7 +14731,7 @@ and at the end of them he gave me a brief account of what had happened."
 Emma was quite relieved, and could presently say, with a little
 more composure,
 
-"_You probably have been less surprized than any of us, for you have
+"You probably have been less surprized than any of us, for you have
 had your suspicions. I have not forgotten that you once tried to give
 me a caution. I wish I had attended to it but (with a sinking
 voice and a heavy sigh) I seem to have been doomed to blindness."
@@ -14747,7 +14747,7 @@ you will not allow yourself ." Her arm was pressed again,
 as he added, in a more broken and subdued accent, "The feelings
 of the warmest friendship Indignation Abominable scoundrel!" 
 And in a louder, steadier tone, he concluded with, "He will soon
-be gone. They will soon be in Yorkshire. I am sorry for her_.
+be gone. They will soon be in Yorkshire. I am sorry for her.
 She deserves a better fate."
 
 Emma understood him; and as soon as she could recover from the
@@ -14980,7 +14980,7 @@ if he could, was already his! Within half an hour, he had passed
 from a thoroughly distressed state of mind, to something so like
 perfect happiness, that it could bear no other name.
 
-_Her change was equal. This one half-hour had given to each the
+Her change was equal. This one half-hour had given to each the
 same precious certainty of being beloved, had cleared from each
 the same degree of ignorance, jealousy, or distrust. On his side,
 there had been a long-standing jealousy, old as the arrival,
@@ -15236,7 +15236,7 @@ and am now, I hope, rational enough to make the rest of my letter
 what it ought to be. It is, in fact, a most mortifying retrospect
 for me. I behaved shamefully. And here I can admit, that my manners
 to Miss W., in being unpleasant to Miss F., were highly blameable.
-_She disapproved them, which ought to have been enough. My plea of
+She disapproved them, which ought to have been enough. My plea of
 concealing the truth she did not think sufficient. She was displeased;
 I thought unreasonably so: I thought her, on a thousand occasions,
 unnecessarily scrupulous and cautious: I thought her even cold.
@@ -15284,8 +15284,8 @@ the vulgarity of needless repetition, and all the insolence of
 imaginary superiority. Have patience with me, I shall soon have done. 
 She closed with this offer, resolving to break with me entirely,
 and wrote the next day to tell me that we never were to meet again. 
-_She felt the engagement to be a source of repentance and misery_
-_to each_: she dissolved it_. This letter reached me on the very
+She felt the engagement to be a source of repentance and misery
+to each: she dissolved it. This letter reached me on the very
 morning of my poor aunt's death. I answered it within an hour;
 but from the confusion of my mind, and the multiplicity of business
 falling on me at once, my answer, instead of being sent with all
@@ -15712,7 +15712,7 @@ I forget the poem at this moment:
     "For when a lady's in the case,
     "You know all other things give place."
 
-Now I say, my dear, in our case, for lady_, read mum! a word
+Now I say, my dear, in our case, for lady, read mum! a word
 to the wise. I am in a fine flow of spirits, an't I? But I want
 to set your heart at ease as to Mrs. S. My representation, you see,
 has quite appeased her."
@@ -15720,7 +15720,7 @@ has quite appeased her."
 And again, on Emma's merely turning her head to look
 at Mrs. Bates's knitting, she added, in a half whisper,
 
-"I mentioned no names_, you will observe. Oh! no; cautious as
+"I mentioned no names, you will observe. Oh! no; cautious as
 a minister of state. I managed it extremely well."
 
 Emma could not doubt. It was a palpable display, repeated on every
@@ -15887,7 +15887,7 @@ the house, and he told me I should not find his master at home,
 but I did not believe him. William seemed rather out of humour.
 He did not know what was come to his master lately, he said, but he
 could hardly ever get the speech of him. I have nothing to do with
-William's wants, but it really is of very great importance that I_
+William's wants, but it really is of very great importance that I
 should see Knightley to-day; and it becomes a matter, therefore,
 of very serious inconvenience that I should have had this hot walk
 to no purpose."
@@ -15993,7 +15993,7 @@ It will be the only difference."
 "Nothing very bad. The fate of thousands. She will be disagreeable
 in infancy, and correct herself as she grows older. I am losing
 all my bitterness against spoilt children, my dearest Emma.
-I, who am owing all my happiness to you_, would not it be horrible
+I, who am owing all my happiness to you, would not it be horrible
 ingratitude in me to be severe on them?"
 
 Emma laughed, and replied: "But I had the assistance of all
@@ -16264,7 +16264,7 @@ How could he be so taken in? Did not think him at all in love
 not in the least. Poor Knightley! There would be an end of all
 pleasant intercourse with him. How happy he had been to come and dine
 with them whenever they asked him! But that would be all over now. 
-Poor fellow! No more exploring parties to Donwell made for her_.
+Poor fellow! No more exploring parties to Donwell made for her.
 Oh! no; there would be a Mrs. Knightley to throw cold water on
 every thing. Extremely disagreeable! But she was not at all sorry
 that she had abused the housekeeper the other day. Shocking plan,
@@ -16366,7 +16366,7 @@ Your friend Harriet will make a much longer history when you see her.
 She will give you all the minute particulars, which only woman's
 language can make interesting. In our communications we deal only
 in the great. However, I must say, that Robert Martin's heart seemed
-for him_, and to me_, very overflowing; and that he did mention,
+for him, and to me, very overflowing; and that he did mention,
 without its being much to the purpose, that on quitting their
 box at Astley's, my brother took charge of Mrs. John Knightley
 and little John, and he followed with Miss Smith and Henry;
@@ -16393,7 +16393,7 @@ He wanted her to look up and smile; and having now brought herself
 not to smile too broadly she did cheerfully answering,
 
 "You need not be at any pains to reconcile me to the match. I think
-Harriet is doing extremely well. Her connexions may be worse than his_.
+Harriet is doing extremely well. Her connexions may be worse than his.
 In respectability of character, there can be no doubt that they are.
 I have been silent from surprize merely, excessive surprize.
 You cannot imagine how suddenly it has come on me! how peculiarly
@@ -16408,7 +16408,7 @@ her he loved her."
 Emma could not help laughing as she answered, "Upon my word,
 I believe you know her quite as well as I do. But, Mr. Knightley,
 are you perfectly sure that she has absolutely and downright
-_accepted him. I could suppose she might in time but can she already? 
+accepted him. I could suppose she might in time but can she already? 
 Did not you misunderstand him? You were both talking of other things;
 of business, shows of cattle, or new drills and might not you,
 in the confusion of so many subjects, mistake him? It was not
