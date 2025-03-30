@@ -17,19 +17,28 @@ import re
 # ---------- hyperparams ----------
 batch_size = 32
 seq_length = 32
-embedding_dim = 96
-dff = 96
+embedding_dim = 64
+dff = 64
 num_heads = 4
 num_layers = 3
 # ---------------------------------
 
-epochs = 5
-learning_rate = 3e-4
+epochs = 10
+learning_rate = 1e-4
 
 model_path      = "tokenizer-gpt/tf-finetuning-gen2.h5"
 tokenizer_path  = "tokenizer-gpt/tokenizer.json"
 
 # ---------------------------------
+
+stopwords = { "a", "an", "to", "is", "for", "and", "but", "as", "being",       # 9
+            "no", "should", "will", "was", "by", "without", "any", "or", "more", # 9
+            "not", "of", "also", "too", "its", "are", "the", "be", "it",       # 9
+            "so", "with", "been", "were", "would", "some", "had", "in", "on",  # 9
+            "at", "much", "most", "even", "this", "that", "their", "other", "such", # 9
+            "might", "he", "she", "his", "her", "you", "they", "all", "me",    # 9
+            "my", "i", "our" } # 3
+
 
 def str_tokenize_words(s: str, stopwords=set()):
     words = re.findall("(\.?\w[\w'\.&]*\w|\w\+*#?)", s)
@@ -62,7 +71,14 @@ def clean_mask_tokens(encodings, mask_tokens, pad_token_id):
 content = []
 with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     text = f.readlines()
-content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 4])
+#content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 4])
+
+for line in text:
+    if len(str_tokenize_words(line)) > 4:
+        content.append(line)
+    tokens = str_tokenize_words(line.strip(), stopwords)
+    if len(tokens) > 4:
+        content.append(" ".join(tokens))
 
 
 # with open("tokenizer-gpt/austen.txt", "r", encoding='utf-8') as f:
@@ -105,7 +121,7 @@ mask_tokens = tokenizer_gpt.convert_ids_to_tokens(mask_tokens_ids)
 
 encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
 
-clean_mask_tokens(encodings, set(mask_tokens_ids), tokenizer_gpt.pad_token_id)
+#clean_mask_tokens(encodings, set(mask_tokens_ids), tokenizer_gpt.pad_token_id)
 
 
 train_data = encodings["input_ids"][:, :-1]
@@ -144,7 +160,7 @@ print(f"model.config: vocab.sz={tokenizer_gpt.vocab_size},",
     )
 
 
-optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=1e-08, clipnorm=1.0)
+optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=1e-08, clipnorm=1.0, weight_decay=1e-4)
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
 model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
@@ -161,6 +177,7 @@ else:
     #model.save("my_gpt2")
 
 model.summary()
+#print(config)
 
 # Making Prediction and Saving Model ###########################################################
 
@@ -173,7 +190,7 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel, max_length = seq_length
     gen_config = GenerationConfig(
         max_length = max_length,
         do_sample = True,
-        temperature = 0.9,
+        temperature = 0.8,
         top_k = 20,
         top_p = 0.9,
         repetition_penalty = 1.2,
