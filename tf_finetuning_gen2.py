@@ -71,7 +71,6 @@ def clean_mask_tokens(encodings, mask_tokens, pad_token_id):
 content = []
 with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     text = f.readlines()
-#content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 4])
 
 for line in text:
     if len(str_tokenize_words(line)) > 4:
@@ -80,10 +79,6 @@ for line in text:
     if len(tokens) > 4:
         content.append(" ".join(tokens))
 
-
-# with open("tokenizer-gpt/austen.txt", "r", encoding='utf-8') as f:
-#     text = f.readlines()
-# content.extend([line.strip() for line in text if len(str_tokenize_words(line)) > 5])
 
 print(f"size={len(content)}")
 # ---------------------------------
@@ -202,8 +197,9 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel, max_length = seq_length
         attention_mask = encodings['attention_mask'],
         generation_config = gen_config
     )
+    print(tokenizer_gpt.convert_ids_to_tokens(output[0]))
     #print(tokenizer_gpt.pad_token_id, tokenizer_gpt.bos_token_id, tokenizer_gpt.eos_token_id)
-    # use add_special_tokens=True, because we use padding as special symbol
+    # use skip_special_tokens=True, because we use padding as special symbol
     return tokenizer_gpt.decode(output[0], skip_special_tokens=True)
 
 
