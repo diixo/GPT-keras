@@ -15,16 +15,16 @@ import re
 
 
 # ---------- hyperparams ----------
-batch_size = 32
+batch_size = 64
 seq_length = 32
-embedding_dim = 64
-dff = 64
+embedding_dim = 256
+dff = 256
 num_heads = 4
-num_layers = 3
+num_layers = 4
 # ---------------------------------
 
-epochs = 10
-learning_rate = 1e-4
+epochs = 50
+learning_rate = 3e-4
 
 model_path      = "tokenizer-gpt/tf-finetuning-gen2.h5"
 tokenizer_path  = "tokenizer-gpt/tokenizer.json"
@@ -108,7 +108,7 @@ attention_masks = encodings["attention_mask"][:, :-1]
 
 ##########################################################################################
 
-ds_tf = tf.data.Dataset.from_tensor_slices((train_data, labels, attention_masks))
+ds_tf = tf.data.Dataset.from_tensor_slices((train_data, attention_masks, labels))
 dataset = ds_tf.shuffle(5000).batch(batch_size, drop_remainder=True)
 
 def train_step(x, mask, y):
