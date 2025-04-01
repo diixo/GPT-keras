@@ -68,20 +68,8 @@ def clean_mask_tokens(encodings, mask_tokens, pad_token_id):
     encodings["attention_mask"] = new_attention_mask
 
 # ---------------------------------
-content = []
 with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     text = f.readlines()
-
-for line in text:
-    if len(str_tokenize_words(line)) > 4:
-        content.append(line)
-    tokens = str_tokenize_words(line.strip(), stopwords)
-    if len(tokens) > 4:
-        content.append(" ".join(tokens))
-
-
-print(f"size={len(content)}")
-# ---------------------------------
 
 tokenizer = Tokenizer(BPE())
 tokenizer.normalizer = Sequence([Lowercase()])
@@ -105,6 +93,33 @@ tokenizer_gpt.add_special_tokens({
     "unk_token": "<unk>",
     "mask_token": "<mask>"
 })
+
+# ---------------------------------
+BOS_id = tokenizer_gpt.convert_tokens_to_ids(["<s>",])[0]
+
+content = []
+for line in text:
+    line = line.strip()
+    if len(str_tokenize_words(line)) > 4:
+        content.append(line)
+        """
+        ids = tokenizer_gpt(
+            line, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np"
+            )["input_ids"]
+
+        if BOS_id in set(ids[0]):
+            print(line)
+            print(tokenizer_gpt.convert_ids_to_tokens(ids[0]))"
+        """
+
+    tokens = str_tokenize_words(line, stopwords)
+    if len(tokens) > 4:
+        result = " ".join(tokens)
+        content.append(result)
+
+print(f"size={len(content)}")
+
+##########################################################################################
 
 # Text Data Preprocessing #################################
 
