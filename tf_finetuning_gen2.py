@@ -45,28 +45,6 @@ def str_tokenize_words(s: str, stopwords=set()):
     if words: return [w for w in words if w not in stopwords]
     return []
 
-
-def clean_mask_tokens(encodings, mask_tokens, pad_token_id):
-
-    train_data = encodings["input_ids"]
-    attention_masks = encodings["attention_mask"]
-
-    batch_size, seq_len = train_data.shape
-    new_train_data = np.full((batch_size, seq_len), pad_token_id, dtype=np.int32)
-    new_attention_mask = np.zeros((batch_size, seq_len), dtype=np.int32)
-
-    for i in range(batch_size):
-        j = 0
-        for k in range(seq_len):
-            if train_data[i, k] in mask_tokens:
-                continue
-            if j < seq_len:
-                new_train_data[i, j] = train_data[i, k]
-                new_attention_mask[i, j] = attention_masks[i, k]
-                j += 1
-    encodings["input_ids"] = new_train_data
-    encodings["attention_mask"] = new_attention_mask
-
 # ---------------------------------
 with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     text = f.readlines()
@@ -121,17 +99,7 @@ print(f"size={len(content)}")
 
 ##########################################################################################
 
-# Text Data Preprocessing #################################
-
-mask_tokens_ids = tokenizer_gpt.convert_tokens_to_ids(['a', 'Ġa', 'an', 'Ġan', 'the', 'Ġthe'])
-
-mask_tokens = tokenizer_gpt.convert_ids_to_tokens(mask_tokens_ids)
-
-##########################################################################################
-
 encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
-
-#clean_mask_tokens(encodings, set(mask_tokens_ids), tokenizer_gpt.pad_token_id)
 
 
 train_data = encodings["input_ids"][:, :-1]
