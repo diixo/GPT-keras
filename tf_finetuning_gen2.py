@@ -90,10 +90,10 @@ for line in text:
             print(tokenizer_gpt.convert_ids_to_tokens(ids[0]))"
         """
 
-    tokens = str_tokenize_words(line, stopwords)
-    if len(tokens) > 4:
-        result = " ".join(tokens)
-        content.append(result)
+    # tokens = str_tokenize_words(line, stopwords)
+    # if len(tokens) > 4:
+    #     result = " ".join(tokens)
+    #     content.append(result)
 
 print(f"content.size={len(content)}")
 
