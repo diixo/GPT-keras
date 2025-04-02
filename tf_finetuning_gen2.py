@@ -17,9 +17,9 @@ import re
 # ---------- hyperparams ----------
 batch_size = 64
 seq_length = 32
-embedding_dim = 256
-dff = 256
-num_heads = 4
+embedding_dim = 384
+dff = 384
+num_heads = 12
 num_layers = 4
 # ---------------------------------
 
@@ -95,7 +95,7 @@ for line in text:
         result = " ".join(tokens)
         content.append(result)
 
-print(f"size={len(content)}")
+print(f"content.size={len(content)}")
 
 ##########################################################################################
 
@@ -138,7 +138,7 @@ print(f"model.config: vocab.sz={tokenizer_gpt.vocab_size},",
     )
 
 
-optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, epsilon=1e-08, clipnorm=1.0, weight_decay=1e-4)
+optimizer = tf.keras.optimizers.AdamW(learning_rate=learning_rate)
 loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
 model.compile(optimizer=optimizer, loss=loss, metrics=[metric])
@@ -180,10 +180,11 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel, max_length = seq_length
         attention_mask = encodings['attention_mask'],
         generation_config = gen_config
     )
-    print(tokenizer_gpt.convert_ids_to_tokens(output[0]))
+    result = output[0]
+    print(tokenizer_gpt.convert_ids_to_tokens(result))
     #print(tokenizer_gpt.pad_token_id, tokenizer_gpt.bos_token_id, tokenizer_gpt.eos_token_id)
     # use skip_special_tokens=True, because we use padding as special symbol
-    return tokenizer_gpt.decode(output[0], skip_special_tokens=True)
+    return tokenizer_gpt.decode(result, skip_special_tokens=True)
 
 
 print(generate_text("Emma knew", model))
