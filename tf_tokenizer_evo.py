@@ -1,6 +1,6 @@
-
+from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config, AutoTokenizer
 import tensorflow as tf
-from transformers import TFGPT2LMHeadModel, GPT2Config, AutoTokenizer
+from pathlib import Path
 import re
 
 
@@ -18,14 +18,13 @@ num_heads = 4
 num_layers = 4
 # ---------------------------------
 
-dropout_rate = 0.1
 learning_rate = 5e-4
 epochs = 3
 
 #####################################################################
 
-with open("input.txt", "r", encoding="utf-8") as f:
-    lines = f.read().split("\n")
+with open("input.txt", "r", encoding="utf-8") as file:
+    lines = file.read().split("\n")
 
 lines = [line for line in lines if len(str_tokenize_words(line)) > 1]
 
@@ -35,6 +34,12 @@ print(f"Lines: {len(lines)}, Batches per epoch: {batches_per_epoch}")
 #####################################################################
 
 tokenizer = AutoTokenizer.from_pretrained("all-MiniLM-L6-v2")
+
+tokens = tokenizer(lines, add_special_tokens=True, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
+
+input_ids = tokens["input_ids"]
+attention_masks = tokens["attention_mask"]
+
 
 config = GPT2Config(
     vocab_size=tokenizer.vocab_size, 
@@ -52,15 +57,9 @@ optimizer = tf.keras.optimizers.AdamW(learning_rate=learning_rate)
 
 loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
-def loss(labels, logits):
+def compute_loss(labels, logits):
     logits = logits[:, :-1, :]
     return loss_fn(labels, logits)
-
-
-tokens = tokenizer(lines, add_special_tokens=True, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
-
-input_ids = tokens["input_ids"]
-attention_masks = tokens["attention_mask"]
 
 
 def map_fn(input_chunk, attention_mask):
@@ -75,7 +74,7 @@ dataset = (tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
            .shuffle(10000)
            .batch(batch_size, drop_remainder=True))
 
-model.compile(optimizer=optimizer, loss=loss)
+model.compile(optimizer=optimizer, loss=compute_loss)
 
 model.fit(dataset, epochs=epochs)
 
