@@ -24,7 +24,7 @@ epochs = 3
 
 model_path = f"shakespeare-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
 
-with open("input.txt", "r", encoding="utf-8") as file:
+with open("tokenizer-gpt/austen-emma.txt", "r", encoding="utf-8") as file:
     lines = file.read().splitlines()
 
 lines = [line for line in lines if len(str_tokenize_words(line)) > 1]
@@ -65,7 +65,6 @@ def compute_loss(labels, logits):
     return loss
 
 
-
 def map_fn(input_chunk, attention_mask):
     input_chunk = input_chunk[:-1]
     target_chunk = input_chunk[1:]
@@ -73,11 +72,8 @@ def map_fn(input_chunk, attention_mask):
     return input_chunk, target_chunk, attention_mask
 
 
-dataset = (tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
-           .map(map_fn)
-           .shuffle(10000)
-           .batch(batch_size, drop_remainder=True))
-
+ds_tf = tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
+dataset = ds_tf.shuffle(5000).batch(batch_size, drop_remainder=True)
 
 model.compile(optimizer=optimizer, loss=compute_loss)
 
@@ -87,7 +83,7 @@ if Path(model_path).exists():
     model(dummy_input)
     model.load_weights(model_path)
 else:
-    model.fit(dataset, epochs=epochs)
+    model.fit(dataset.map(map_fn), epochs=epochs)
     model.save_weights(model_path)
 
 # --------------------------------------------------
