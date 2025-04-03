@@ -63,15 +63,11 @@ input_ids = tokens["input_ids"]
 attention_masks = tokens["attention_mask"]
 
 
-def split_input_target(input_chunk, attention_mask):
+def map_fn(input_chunk, attention_mask):
     input_chunk = input_chunk[:-1]
     target_chunk = input_chunk[1:]
     attention_mask = attention_mask[:-1]
     return input_chunk, target_chunk, attention_mask
-
-
-def map_fn(input_chunk, attention_mask):
-    return split_input_target(input_chunk, attention_mask)
 
 
 dataset = (tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
