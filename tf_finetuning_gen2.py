@@ -31,15 +31,6 @@ tokenizer_path  = "tokenizer-gpt/tokenizer.json"
 
 # ---------------------------------
 
-stopwords = { "a", "an", "to", "is", "for", "and", "but", "as", "being",       # 9
-            "no", "should", "will", "was", "by", "without", "any", "or", "more", # 9
-            "not", "of", "also", "too", "its", "are", "the", "be", "it",       # 9
-            "so", "with", "been", "were", "would", "some", "had", "in", "on",  # 9
-            "at", "much", "most", "even", "this", "that", "their", "other", "such", # 9
-            "might", "he", "she", "his", "her", "you", "they", "all", "me",    # 9
-            "my", "i", "our" } # 3
-
-
 def str_tokenize_words(s: str, stopwords=set()):
     words = re.findall("(\.?\w[\w'\.&]*\w|\w\+*#?)", s)
     if words: return [w for w in words if w not in stopwords]
@@ -48,6 +39,16 @@ def str_tokenize_words(s: str, stopwords=set()):
 # ---------------------------------
 with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     text = f.readlines()
+
+content = []
+for line in text:
+    line = line.strip()
+    if len(str_tokenize_words(line)) > 4:
+        content.append(line)
+
+print(f"Lines: {len(content)}, Batches per epoch: {len(content) // batch_size}")
+
+##########################################################################################
 
 tokenizer = Tokenizer(BPE())
 tokenizer.normalizer = Sequence([Lowercase()])
@@ -62,6 +63,8 @@ tokenizer.train(["tokenizer-gpt/austen-emma.txt"], trainer)
 
 tokenizer.save(tokenizer_path)
 
+##########################################################################################
+
 tokenizer_gpt = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
 
 tokenizer_gpt.add_special_tokens({
@@ -72,32 +75,6 @@ tokenizer_gpt.add_special_tokens({
     "mask_token": "<mask>"
 })
 
-# ---------------------------------
-BOS_id = tokenizer_gpt.convert_tokens_to_ids(["<s>",])[0]
-
-content = []
-for line in text:
-    line = line.strip()
-    if len(str_tokenize_words(line)) > 4:
-        content.append(line)
-        """
-        ids = tokenizer_gpt(
-            line, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np"
-            )["input_ids"]
-
-        if BOS_id in set(ids[0]):
-            print(line)
-            print(tokenizer_gpt.convert_ids_to_tokens(ids[0]))"
-        """
-
-    # tokens = str_tokenize_words(line, stopwords)
-    # if len(tokens) > 4:
-    #     result = " ".join(tokens)
-    #     content.append(result)
-
-print(f"content.size={len(content)}")
-
-##########################################################################################
 
 encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
 
@@ -152,7 +129,7 @@ if Path(model_path).exists():
 else:
     model.fit(dataset.map(train_step), epochs=epochs)
     model.save_weights(model_path)
-    #model.save("my_gpt2")
+
 
 model.summary()
 #print(config)
