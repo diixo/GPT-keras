@@ -1,4 +1,4 @@
-from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config, AutoTokenizer, GPT2TokenizerFast
+from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config, AutoTokenizer, GPT2TokenizerFast, GenerationConfig
 import tensorflow as tf
 from pathlib import Path
 import re
@@ -29,7 +29,7 @@ model_path = f"emma-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_he
 with open("tokenizer-gpt/austen-emma.txt", "r", encoding="utf-8") as file:
     lines = file.read().splitlines()
 
-lines = [line for line in lines if len(str_tokenize_words(line)) > 1]
+lines = [line.lower() for line in lines if len(line.split()) > 2]
 
 batches_per_epoch = len(lines) // batch_size
 print(f"Lines: {len(lines)}, Batches per epoch: {batches_per_epoch}")
@@ -105,28 +105,46 @@ else:
 model.summary()
 
 
-def generate_text(model, tokenizer: GPT2Tokenizer, prompt: str):
+def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenizer, prompt: str, max_length = seq_length, do_sample = True):
 
-    encoding = tokenizer(prompt, return_tensors='tf')
+    assert(max_length <= seq_length)
 
-    if "input_ids" not in encoding or encoding["input_ids"] is None:
+    encodings = tokenizer([prompt], return_tensors='tf')
+
+    if "input_ids" not in encodings or encodings["input_ids"] is None:
         raise ValueError("Ошибка: 'input_ids' не был сгенерирован!")
 
-    _ids = input_ids
+    if do_sample:
+        gen_config = GenerationConfig(
+            max_length = max_length,
+            do_sample = do_sample,
+            temperature = 0.8,
+            top_k = 20,
+            top_p = 0.9,
+            repetition_penalty = 1.2,
+            no_repeat_ngram_size = 1
+        )
+    else:
+        gen_config = GenerationConfig(
+            max_length = max_length,
+            do_sample = do_sample,
+            temperature = 0.8,
+            top_p = 0.9,
+            repetition_penalty = 1.2,
+            no_repeat_ngram_size = 1
+        )
 
-    print(f"input_ids type: {type(_ids)}")
-    print(f"input_ids shape: {_ids.shape}")
-    print(f"input_ids tensor: {_ids}")
+    output = model.generate(
+        inputs = encodings['input_ids'],
+        attention_mask = encodings['attention_mask'],
+        generation_config = gen_config
+    )
+    result = output[0]
+    #tokenizer.convert_ids_to_tokens(result, skip_special_tokens=True)
 
-    _ids = tf.squeeze(_ids, axis=0)
-
-    decoded_text = tokenizer.decode(_ids.numpy(), skip_special_tokens=True)
-
-    print(f"Decoded text: {decoded_text}")
-    
-    return decoded_text
+    return tokenizer.decode(result, skip_special_tokens=True)
 
 
-#result = generate_text(model, tokenizer, "ROMEO:")
+result = generate_text(model, tokenizer, "Emma knows")
 
-#print(f"Final result: {result}")
+print(f"Final result: {result}")
