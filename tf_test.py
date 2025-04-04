@@ -14,7 +14,7 @@ num_layers = 4
 # ---------------------------------
 
 learning_rate = 5e-4
-epochs = 5
+epochs = 10
 
 # ---------------------------------
 
@@ -24,15 +24,15 @@ def str_tokenize_words(s: str, stopwords=set()):
     return []
 
 
-model_path = f"emma-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
+model_path = f"tokenizer-gpt/emma-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
 
-with open("tokenizer-gpt/austen-emma.txt", "r", encoding="utf-8") as file:
+with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding="utf-8") as file:
     lines = file.read().splitlines()
 
 lines = [line.lower() for line in lines if len(line.split()) > 2]
 
 batches_per_epoch = len(lines) // batch_size
-print(f"Lines: {len(lines)}, Batches per epoch: {batches_per_epoch}")
+print(f"Lines: {len(lines)}. Batches per epoch: {batches_per_epoch}")
 
 #####################################################################
 
@@ -89,7 +89,8 @@ def map_fn(input_chunk, attention_mask):
 ds_tf = tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
 dataset = ds_tf.shuffle(5000).batch(batch_size, drop_remainder=True)
 
-model.compile(optimizer=optimizer, loss=compute_loss)
+metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
+model.compile(optimizer=optimizer, loss=compute_loss, metrics=[metric])
 
 ###################################################
 
