@@ -14,7 +14,7 @@ num_layers = 4
 # ---------------------------------
 
 learning_rate = 5e-4
-epochs = 20
+epochs = 30
 
 # ---------------------------------
 
@@ -97,9 +97,9 @@ if Path(model_path).exists():
     dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
     model(dummy_input)
     model.load_weights(model_path)
-#else:
-model.fit(dataset.map(map_fn), epochs=epochs)
-model.save_weights(model_path)
+else:
+    model.fit(dataset.map(map_fn), epochs=epochs)
+    model.save_weights(model_path)
 
 # --------------------------------------------------
 model.summary()
