@@ -18,12 +18,6 @@ epochs = 20
 
 # ---------------------------------
 
-def str_tokenize_words(s: str, stopwords=set()):
-    words = re.findall("(\.?\w[\w'\.&]*\w|\w\+*#?)", s)
-    if words: return [w for w in words if w not in stopwords]
-    return []
-
-
 model_path = f"tokenizer-gpt/emma-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
 
 with open("tokenizer-gpt/austen-emma.txt", "r", encoding="utf-8") as file:
@@ -118,7 +112,7 @@ def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenizer, prompt: st
     encodings = tokenizer([prompt], return_tensors='tf')
 
     if "input_ids" not in encodings or encodings["input_ids"] is None:
-        raise ValueError("Ошибка: 'input_ids' не был сгенерирован!")
+        raise ValueError("Error: 'input_ids' have not been generated!")
 
     if do_sample:
         gen_config = GenerationConfig(
