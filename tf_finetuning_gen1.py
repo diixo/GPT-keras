@@ -18,12 +18,6 @@ epochs = 30
 
 # ---------------------------------
 
-def str_tokenize_words(s: str, stopwords=set()):
-    words = re.findall("(\.?\w[\w'\.&]*\w|\w\+*#?)", s)
-    if words: return [w for w in words if w not in stopwords]
-    return []
-
-
 model_path = f"tokenizer-gpt/emma-gen1-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
 
 with open("tokenizer-gpt/austen-emma.txt", "r", encoding="utf-8") as file:
