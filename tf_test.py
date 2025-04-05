@@ -14,7 +14,7 @@ num_layers = 4
 # ---------------------------------
 
 learning_rate = 5e-4
-epochs = 10
+epochs = 20
 
 # ---------------------------------
 
@@ -26,7 +26,7 @@ def str_tokenize_words(s: str, stopwords=set()):
 
 model_path = f"tokenizer-gpt/emma-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
 
-with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding="utf-8") as file:
+with open("tokenizer-gpt/austen-emma.txt", "r", encoding="utf-8") as file:
     lines = file.read().splitlines()
 
 lines = [line.lower() for line in lines if len(line.split()) > 2]
@@ -89,7 +89,12 @@ def map_fn(input_chunk, attention_mask):
 ds_tf = tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
 dataset = ds_tf.shuffle(5000).batch(batch_size, drop_remainder=True)
 
-metric = tf.keras.metrics.SparseCategoricalAccuracy('accuracy')
+class ShiftedSparseCategoricalAccuracy(tf.keras.metrics.SparseCategoricalAccuracy):
+    def update_state(self, y_true, y_pred, sample_weight=None):
+        y_pred = y_pred[:, :-1, :]  # [batch, seq-1, vocab]
+        return super().update_state(y_true, y_pred, sample_weight)
+
+metric = ShiftedSparseCategoricalAccuracy("accuracy")
 model.compile(optimizer=optimizer, loss=compute_loss, metrics=[metric])
 
 ###################################################
@@ -98,9 +103,9 @@ if Path(model_path).exists():
     dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
     model(dummy_input)
     model.load_weights(model_path)
-else:
-    model.fit(dataset.map(map_fn), epochs=epochs)
-    model.save_weights(model_path)
+#else:
+model.fit(dataset.map(map_fn), epochs=epochs)
+model.save_weights(model_path)
 
 # --------------------------------------------------
 model.summary()
