@@ -2,6 +2,7 @@ from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config, AutoToken
 import tensorflow as tf
 from pathlib import Path
 import re
+import numpy as np
 
 
 # ---------- hyperparams ----------
@@ -32,13 +33,24 @@ print(f"Lines: {len(lines)}. Batches per epoch: {batches_per_epoch}")
 
 tokenizer = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
 
-tokenizer.pad_token = tokenizer.eos_token
-
 print(f"model.config: vocab.sz={tokenizer.vocab_size},",
     f"pad_token_id={tokenizer.pad_token_id},",
     f"bos_token_id={tokenizer.bos_token_id},",
     f"eos_token_id={tokenizer.eos_token_id};",
     )
+
+#tokenizer.pad_token = tokenizer.eos_token
+
+##########################################################################################
+
+tokens = tokenizer(lines, padding=True, truncation=True, return_tensors='np', max_length=seq_length + 1)
+
+input_ids = tokens["input_ids"]
+attention_masks = tokens["attention_mask"]
+
+assert(np.max(input_ids) < tokenizer.vocab_size)
+
+##########################################################################################
 
 config = GPT2Config(
     vocab_size=tokenizer.vocab_size, 
@@ -52,15 +64,6 @@ config = GPT2Config(
     eos_token_id=tokenizer.eos_token_id,
     pad_token_id=tokenizer.pad_token_id
 )
-
-##########################################################################################
-
-tokens = tokenizer(lines, padding=True, truncation=True, return_tensors='np', max_length=seq_length + 1)
-
-input_ids = tokens["input_ids"]
-attention_masks = tokens["attention_mask"]
-
-##########################################################################################
 
 model = TFGPT2LMHeadModel(config)
 
