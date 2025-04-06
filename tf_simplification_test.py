@@ -69,8 +69,18 @@ print(f"model.config: vocab.sz={tokenizer_gpt.vocab_size},",
 
 ##########################################################################################
 
-encodings = tokenizer_gpt(content, padding=True, truncation=True, max_length=seq_length, return_tensors="np")
 
-train_data = encodings["input_ids"][:, :-1]
+def test(txt = "Does Mrs. Churchill do the same?"):
+    ids = tokenizer_gpt(txt, padding=True, truncation=True, max_length=seq_length, return_tensors="np")["input_ids"]
+    ids = ids[0]
+    print(tokenizer_gpt.convert_ids_to_tokens(ids))
 
-##########################################################################################
+test("Two mixing freaks")
+
+# for line in content:
+#     ids = tokenizer_gpt(line, padding=True, truncation=True, max_length=seq_length, return_tensors="np")["input_ids"]
+#     ids = ids[0]
+#     if 10011 in set(ids):
+#         print(line)
+#         print(tokenizer_gpt.convert_ids_to_tokens(ids))
+
