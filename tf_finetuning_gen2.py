@@ -7,7 +7,7 @@ from tokenizers.decoders import ByteLevel as ByteLevelDecoder
 from tokenizers.normalizers import Sequence, Lowercase
 from tokenizers.pre_tokenizers import ByteLevel
 from tokenizers.trainers import BpeTrainer
-from transformers import GPT2TokenizerFast, GPT2Config, TFGPT2LMHeadModel, GenerationConfig
+from transformers import GPT2TokenizerFast, GPT2Config, TFGPT2LMHeadModel, GenerationConfig, PreTrainedTokenizerFast
 import tensorflow as tf
 import numpy as np
 from pathlib import Path
@@ -27,7 +27,7 @@ epochs = 50
 learning_rate = 3e-4
 
 model_path      = "tokenizer-gpt/tf-finetuning-gen2.h5"
-tokenizer_path  = "tokenizer-gpt/tokenizer.json"
+tokenizer_path  = "tokenizer-gpt"
 
 # ---------------------------------
 
@@ -61,20 +61,20 @@ trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), sp
 
 tokenizer.train(["tokenizer-gpt/austen-emma.txt"], trainer)
 
-tokenizer.save(tokenizer_path)
+fast_tokenizer = PreTrainedTokenizerFast(
+    tokenizer_object = tokenizer,
+    bos_token = "<s>",
+    eos_token = "</s>",
+    unk_token = "<unk>",
+    pad_token = "<pad>",
+    mask_token = "<mask>"
+)
+
+fast_tokenizer.save_pretrained(tokenizer_path)
 
 ##########################################################################################
 
-tokenizer_gpt = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
-
-tokenizer_gpt.add_special_tokens({
-    "pad_token": "<pad>",
-    "bos_token": "<s>",
-    "eos_token": "</s>",
-    "unk_token": "<unk>",
-    "mask_token": "<mask>"
-})
-
+tokenizer_gpt = GPT2TokenizerFast.from_pretrained(tokenizer_path)
 
 encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
 
