@@ -76,7 +76,7 @@ fast_tokenizer.save_pretrained(tokenizer_path)
 
 tokenizer_gpt = GPT2TokenizerFast.from_pretrained(tokenizer_path)
 
-encodings = tokenizer_gpt(content, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
+encodings = tokenizer_gpt(content, padding=True, truncation=True, max_length=seq_length, return_tensors="np")
 
 
 train_data = encodings["input_ids"][:, :-1]
