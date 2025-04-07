@@ -156,8 +156,6 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel, max_length = seq_length
         gen_config = GenerationConfig(
             max_length = max_length,
             do_sample = do_sample,
-            temperature = 0.8,
-            top_p = 0.9,
             repetition_penalty = 1.2,
             no_repeat_ngram_size = 1
         )

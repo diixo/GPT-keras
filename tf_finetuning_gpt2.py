@@ -128,8 +128,6 @@ def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenizer, prompt: st
         gen_config = GenerationConfig(
             max_length = max_length,
             do_sample = do_sample,
-            temperature = 0.8,
-            top_p = 0.9,
             repetition_penalty = 1.2,
             no_repeat_ngram_size = 1
         )
