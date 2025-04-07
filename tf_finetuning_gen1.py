@@ -1,4 +1,4 @@
-from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config, AutoTokenizer, GPT2TokenizerFast, GenerationConfig
+from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config, GPT2TokenizerFast, GenerationConfig
 import tensorflow as tf
 from pathlib import Path
 import re
@@ -8,14 +8,14 @@ import numpy as np
 # ---------- hyperparams ----------
 batch_size = 64
 seq_length = 24
-embedding_dim = 256
-dff = 256
-num_heads = 8
+embedding_dim = 384
+dff = 384
+num_heads = 12
 num_layers = 4
 # ---------------------------------
 
 learning_rate = 5e-4
-epochs = 10
+epochs = 20
 
 # ---------------------------------
 
