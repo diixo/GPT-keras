@@ -37,7 +37,7 @@ def str_tokenize_words(s: str, stopwords=set()):
     return []
 
 # ---------------------------------
-with open("tokenizer-gpt/processed-austen-emma.txt", "r", encoding='utf-8') as f:
+with open("data/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     text = f.readlines()
 
 content = []
@@ -59,7 +59,7 @@ trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), sp
     "<pad>", "<s>", "</s>", "<unk>", "<mask>"
     ])
 
-tokenizer.train(["tokenizer-gpt/austen-emma.txt"], trainer)
+tokenizer.train(["data/austen-emma.txt"], trainer)
 
 fast_tokenizer = PreTrainedTokenizerFast(
     tokenizer_object = tokenizer,

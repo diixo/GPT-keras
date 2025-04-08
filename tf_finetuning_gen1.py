@@ -21,7 +21,7 @@ epochs = 10
 
 model_path = f"tokenizer-gpt/emma-gen1-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
 
-with open("tokenizer-gpt/austen-emma.txt", "r", encoding="utf-8") as file:
+with open("data/austen-emma.txt", "r", encoding="utf-8") as file:
     lines = file.read().splitlines()
 
 lines = [line.lower() for line in lines if len(line.split()) > 2]
@@ -29,7 +29,7 @@ lines = [line.lower() for line in lines if len(line.split()) > 2]
 batches_per_epoch = len(lines) // batch_size
 print(f"Lines: {len(lines)}. Batches per epoch: {batches_per_epoch}")
 
-#####################################################################
+##########################################################################################
 
 tokenizer = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
 
@@ -38,8 +38,6 @@ print(f"model.config: vocab.sz={tokenizer.vocab_size},",
     f"bos_token_id={tokenizer.bos_token_id},",
     f"eos_token_id={tokenizer.eos_token_id};",
     )
-
-#tokenizer.pad_token = tokenizer.eos_token
 
 ##########################################################################################
 
