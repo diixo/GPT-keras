@@ -106,7 +106,7 @@ else:
 model.summary()
 
 
-def generate_text(prompt: str, model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, max_length=200, do_sample=True):
+def generate_text(prompt: str, model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, max_length=seq_length, do_sample=True):
 
     encodings = tokenizer([prompt], return_tensors='tf')
 
@@ -136,9 +136,7 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenize
         attention_mask = encodings['attention_mask'],
         generation_config = gen_config
     )
-    print(output.shape)
     generated = tf.expand_dims(output[0], axis=0)
-    print(generated.shape)
 
     while generated.shape[1] < max_length:
         input_slice = generated[:, -seq_length + 1:]
@@ -150,15 +148,22 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenize
         # <<--
 
         logits = model(input_slice).logits[:, -1, :]
-        next_token = tf.random.categorical(logits, num_samples=1, dtype=tf.int32)
 
+        # masking paddings
+        pad_id = tokenizer.pad_token_id
+        if pad_id is not None:
+            logits = tf.tensor_scatter_nd_update(
+                logits,
+                indices=[[0, pad_id]],
+                updates=[-1e10]
+            )
+
+        next_token_id = tf.random.categorical(logits, num_samples=1, dtype=tf.int32)
         #-->>
         #print(next_token.shape, "=", tokenizer.convert_ids_to_tokens(next_token))
         #print("value=", tf.squeeze(next_token).numpy())
         #<<--
-
-        generated = tf.concat([generated, next_token], axis=1)
-        #print("generated.shape=", generated.shape)
+        generated = tf.concat([generated, next_token_id], axis=1)
 
     return tokenizer.decode(generated[0], skip_special_tokens=True)
 
