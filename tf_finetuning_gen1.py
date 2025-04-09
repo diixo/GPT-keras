@@ -106,9 +106,7 @@ else:
 model.summary()
 
 
-def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenizer, prompt: str, max_length = seq_length, do_sample = True):
-
-    assert(max_length <= seq_length)
+def generate_text(prompt: str, model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, max_length=200, do_sample=True):
 
     encodings = tokenizer([prompt], return_tensors='tf')
 
@@ -117,7 +115,7 @@ def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenizer, prompt: st
 
     if do_sample: # rnd
         gen_config = GenerationConfig(
-            max_length = max_length,
+            max_length = seq_length,
             do_sample = do_sample,
             temperature = 0.8,
             top_k = 20,
@@ -127,7 +125,7 @@ def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenizer, prompt: st
         )
     else:
         gen_config = GenerationConfig(
-            max_length = max_length,
+            max_length = seq_length,
             do_sample = do_sample,
             repetition_penalty = 1.2,
             no_repeat_ngram_size = 1
@@ -138,12 +136,21 @@ def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenizer, prompt: st
         attention_mask = encodings['attention_mask'],
         generation_config = gen_config
     )
-    result = output[0]
-    #tokenizer.convert_ids_to_tokens(result, skip_special_tokens=True)
+    print(output.shape)
+    generated = tf.expand_dims(output[0], axis=0)
+    print(generated.shape)
 
-    return tokenizer.decode(result, skip_special_tokens=True)
+    while generated.shape[1] < max_length:
+        input_slice = generated[:, -seq_length + 1:]
+        logits = model(input_slice).logits[:, -1, :]
+        next_token = tf.random.categorical(logits, num_samples=1, dtype=tf.int32)
+
+        generated = tf.concat([generated, next_token], axis=1)
+        #print("generated.shape=", generated.shape)
+
+    return tokenizer.decode(generated[0], skip_special_tokens=True)
 
 
-result = generate_text(model, tokenizer, prompt = "Emma knows ")
+result = generate_text(prompt="Emma knows ", model=model, tokenizer=tokenizer)
 
 print(f"Final result: {result}")
