@@ -1,4 +1,4 @@
-from transformers import GPT2Tokenizer, TFGPT2LMHeadModel, GPT2Config, AutoTokenizer
+from transformers import TFGPT2LMHeadModel, GPT2Config, AutoTokenizer
 import tensorflow as tf
 from pathlib import Path
 import re
@@ -9,24 +9,26 @@ def str_tokenize_words(s: str, stopwords=set()):
     if words: return [w for w in words if w not in stopwords]
     return []
 
-# ---------- hyperparams ----------
+# ---------- hyperparams --------------------------------------------
 batch_size = 32
 seq_length = 64
 embedding_dim = 256
 dff = 256
 num_heads = 4
 num_layers = 4
-# ---------------------------------
+# -------------------------------------------------------------------
 
 learning_rate = 5e-4
 epochs = 3
 
 #####################################################################
 
+model_path = f"romeo-MiniLM-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
+
 with open("input.txt", "r", encoding="utf-8") as file:
     lines = file.read().split("\n")
 
-lines = [line for line in lines if len(str_tokenize_words(line)) > 1]
+lines = [line for line in lines if len(str_tokenize_words(line)) > 2]
 
 batches_per_epoch = len(lines) // batch_size
 print(f"Lines: {len(lines)}, Batches per epoch: {batches_per_epoch}")
@@ -34,6 +36,12 @@ print(f"Lines: {len(lines)}, Batches per epoch: {batches_per_epoch}")
 #####################################################################
 
 tokenizer = AutoTokenizer.from_pretrained("all-MiniLM-L6-v2")
+
+print(f"model.config: vocab.sz={tokenizer.vocab_size},",
+    f"pad_token_id={tokenizer.pad_token_id},",
+    f"bos_token_id={tokenizer.bos_token_id},",
+    f"eos_token_id={tokenizer.eos_token_id};",
+    )
 
 tokens = tokenizer(lines, add_special_tokens=True, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
 
@@ -48,6 +56,10 @@ config = GPT2Config(
     n_layer=num_layers, 
     n_head=num_heads, 
     n_inner=dff
+
+    bos_token_id=tokenizer.bos_token_id,
+    eos_token_id=tokenizer.eos_token_id,
+    pad_token_id=tokenizer.pad_token_id
 )
 
 
@@ -76,9 +88,15 @@ dataset = (tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
 
 model.compile(optimizer=optimizer, loss=compute_loss)
 
-model.fit(dataset, epochs=epochs)
+if Path(model_path).exists():
+    dummy_input = tf.ones((1, seq_length), dtype=tf.int32)
+    model(dummy_input)
+    model.load_weights(model_path)
+else:
+    model.fit(dataset, epochs=epochs)
+    model.save_weights(model_path)
 
-# --------------------------------------------------
+# -------------------------------------------------------------------
 model.summary()
 
 def generate_text(model, start_string, length=50):
