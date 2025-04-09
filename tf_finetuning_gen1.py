@@ -142,8 +142,20 @@ def generate_text(prompt: str, model: TFGPT2LMHeadModel, tokenizer: GPT2Tokenize
 
     while generated.shape[1] < max_length:
         input_slice = generated[:, -seq_length + 1:]
+
+        # -->>
+        #slice_ids = tf.reshape(input_slice, [-1])
+        #print(slice_ids.numpy())
+        #print(tokenizer.convert_ids_to_tokens(slice_ids))
+        # <<--
+
         logits = model(input_slice).logits[:, -1, :]
         next_token = tf.random.categorical(logits, num_samples=1, dtype=tf.int32)
+
+        #-->>
+        #print(next_token.shape, "=", tokenizer.convert_ids_to_tokens(next_token))
+        #print("value=", tf.squeeze(next_token).numpy())
+        #<<--
 
         generated = tf.concat([generated, next_token], axis=1)
         #print("generated.shape=", generated.shape)
