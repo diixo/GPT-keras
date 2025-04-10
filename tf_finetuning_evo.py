@@ -113,7 +113,7 @@ def top_k_filtering(logits, top_k=50, filter_value=-float('Inf')):
 def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, prompt: str, length=seq_length, top_k=20):
 
     input_ids = tokenizer(prompt, return_tensors="tf")["input_ids"]
-    print("-->>", input_ids[0])
+    print("-->>", input_ids[0].numpy(), tokenizer.convert_ids_to_tokens(input_ids[0]))
 
     sz = length - input_ids.shape[-1]
 
