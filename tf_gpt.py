@@ -1,6 +1,4 @@
 
-# https://www.kaggle.com/code/vimalpillai/finetuning-gpt2-model-tensorflow/notebook
-
 
 import tensorflow as tf
 import numpy as np
