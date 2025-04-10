@@ -102,9 +102,17 @@ else:
 model.summary()
 
 
-def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, start_string, length=seq_length):
+def top_k_filtering(logits, top_k=50, filter_value=-float('Inf')):
+    if top_k > 0:
+        values, _ = tf.math.top_k(logits, k=top_k)
+        min_values = values[:, -1, tf.newaxis]
+        logits = tf.where(logits < min_values, filter_value, logits)
+    return logits
 
-    input_ids = tokenizer(start_string, return_tensors="tf")["input_ids"]
+
+def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, prompt: str, length=seq_length, top_k=20):
+
+    input_ids = tokenizer(prompt, return_tensors="tf")["input_ids"]
     generated_ids = []
 
     sz = length - input_ids.shape[-1]
@@ -112,7 +120,18 @@ def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, start_
     for _ in range(sz):
         predictions = model(input_ids).logits
         predictions = predictions[:, -1, :]
-        categoricals = tf.random.categorical(predictions, num_samples=1).numpy()
+
+        # -->> extinguish pad token
+        pad_token_id = tokenizer.pad_token_id
+        logits = tf.tensor_scatter_nd_update(
+            predictions,
+            indices=[[0, pad_token_id]],  # batch=0
+            updates=[-1e8]
+        )
+        # <<--
+
+        filtered_logits = top_k_filtering(logits, top_k=top_k)
+        categoricals = tf.random.categorical(filtered_logits, num_samples=1).numpy()
         predicted_id = categoricals[-1, 0]
 
         input_ids = tf.concat([input_ids, [[predicted_id]]], axis=-1)
