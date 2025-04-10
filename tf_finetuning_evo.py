@@ -77,16 +77,14 @@ def compute_loss(labels, logits):
 
 
 def map_fn(input_chunk, attention_mask):
-    input_chunk = input_chunk[:-1]
-    target_chunk = input_chunk[1:]
-    attention_mask = attention_mask[:-1]
+    input_chunk = input_chunk[:, :-1]
+    target_chunk = input_chunk[:, 1:]
+    attention_mask = attention_mask[:, :-1]
     return input_chunk, target_chunk, attention_mask
 
 
-dataset = (tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
-           .map(map_fn)
-           .shuffle(10000)
-           .batch(batch_size, drop_remainder=True))
+ds_tf = tf.data.Dataset.from_tensor_slices((input_ids, attention_masks))
+dataset = ds_tf.shuffle(5000).batch(batch_size, drop_remainder=True)
 
 model.compile(optimizer=optimizer, loss=compute_loss)
 
@@ -95,7 +93,7 @@ if Path(model_path).exists():
     model(dummy_input)
     model.load_weights(model_path)
 else:
-    model.fit(dataset, epochs=epochs)
+    model.fit(dataset.map(map_fn), epochs=epochs)
     model.save_weights(model_path)
 
 # -------------------------------------------------------------------
