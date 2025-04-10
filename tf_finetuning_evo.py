@@ -23,7 +23,7 @@ epochs = 10
 
 #####################################################################
 
-model_path = f"romeo-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
+model_path = f"tokenizer-gpt/romeo-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
 
 with open("input.txt", "r", encoding="utf-8") as file:
     lines = file.read().split("\n")
@@ -113,7 +113,6 @@ def top_k_filtering(logits, top_k=50, filter_value=-float('Inf')):
 def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, prompt: str, length=seq_length, top_k=20):
 
     input_ids = tokenizer(prompt, return_tensors="tf")["input_ids"]
-    generated_ids = []
 
     sz = length - input_ids.shape[-1]
 
@@ -138,8 +137,7 @@ def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, prompt
 
         input_ids = input_ids[:, -config.n_positions:]
 
-        generated_ids.append(predicted_id)
-    print(input_ids[0])
+    #print(input_ids[0])
 
     return tokenizer.decode(input_ids[0].numpy(), skip_special_tokens=True)
 
