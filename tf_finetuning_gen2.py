@@ -26,7 +26,6 @@ num_layers = 4
 epochs = 50
 learning_rate = 3e-4
 
-model_path      = "tokenizer-gpt/tf-finetuning-gen2.h5"
 tokenizer_path  = "tokenizer-gpt"
 
 # ---------------------------------
@@ -37,6 +36,9 @@ def str_tokenize_words(s: str, stopwords=set()):
     return []
 
 # ---------------------------------
+
+model_path = f"tokenizer-gpt/emma-gen2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
+
 with open("data/processed-austen-emma.txt", "r", encoding='utf-8') as f:
     text = f.readlines()
 
