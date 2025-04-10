@@ -1,12 +1,7 @@
 
 # https://www.kaggle.com/code/vimalpillai/finetuning-gpt2-model-tensorflow/notebook
 
-from tokenizers.models import BPE
-from tokenizers import Tokenizer
-from tokenizers.decoders import ByteLevel as ByteLevelDecoder
-from tokenizers.normalizers import Sequence, Lowercase
-from tokenizers.pre_tokenizers import ByteLevel
-from tokenizers.trainers import BpeTrainer
+
 from transformers import GPT2TokenizerFast, GPT2Config, TFGPT2LMHeadModel
 import tensorflow as tf
 import numpy as np
@@ -21,46 +16,19 @@ num_heads = 4
 num_layers = 4
 # ---------------------------------
 
-
-tokenizer = Tokenizer(BPE())
-tokenizer.normalizer = Sequence([Lowercase()])
-tokenizer.pre_tokenizer = ByteLevel()
-tokenizer.decoder = ByteLevelDecoder()
-
-trainer = BpeTrainer(vocab_size=50000, initial_alphabet=ByteLevel.alphabet(), special_tokens=[
-    "<a>","<pad>","</s>","<unk>","<mask>"
-    ])
-
-tokenizer.train(["austen-emma.txt"],trainer)
-
-tokenizer.save("tokenizer-gpt/tokenizer.json")
-
 tokenizer_gpt = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
 
-tokenizer_gpt.add_special_tokens({
-    "eos_token": "</s>",
-    "bos_token": "<s>",
-    "unk_token": "<unk>",
-    "pad_token": "<pad>",
-    "mask_token": "<mask>"
-})
-
-print("bos_token_id =", tokenizer_gpt.bos_token_id)
-
-tokenizer_gpt.encode("<s> This  is </s>")
-
 config = GPT2Config(
-    vocab_size=tokenizer_gpt.vocab_size,
-    bos_token_id=tokenizer_gpt.bos_token_id,
-    eos_token_id=tokenizer_gpt.eos_token_id
+    bos_token_id = tokenizer_gpt.bos_token_id,
+    eos_token_id = tokenizer_gpt.eos_token_id,
+    pad_token_id = tokenizer_gpt.pad_token_id
 )
 
-
+###########################################################
 # Text Data Preprocessing #################################
-with open("austen-emma.txt", "r", encoding='utf-8') as f:
+with open("data/austen-emma.txt", "r", encoding='utf-8') as f:
     content = f.readlines()
 
-print("lines=", len(content))
 
 content_p = []
 for c in content:
@@ -70,7 +38,8 @@ content_p = " ".join(content_p) + tokenizer_gpt.eos_token
 
 tokenized_content = tokenizer_gpt.encode(content_p)
 
-print("tokenized_content=", len(tokenized_content))
+print("resulted lines =", len(content))
+print("tokenized_content =", len(tokenized_content))
 
 examples = []
 for i in range(0, len(tokenized_content)):
@@ -112,15 +81,16 @@ model.fit(dataset, epochs=epochs)
 
 def generate_text(start, model):
     input_token_ids = tokenizer_gpt.encode(start, return_tensors='tf')
-    output = model.generate(input_token_ids,max_length = 200,
-            num_beams = 5,
-            temperature = 0.7,
-            no_repeat_ngram_size = 2,
-            num_return_sequences = 1
-            )
+    output = model.generate(input_token_ids,
+        max_length = 200,
+        num_beams = 5,
+        temperature = 0.7,
+        no_repeat_ngram_size = 2,
+        num_return_sequences = 1
+        )
     return tokenizer_gpt.decode(output[0])
 
 
-model.save_weights("fine_tuned_gpt.h5")
+#model.save_weights("tokenizer-gpt/tf_finetuning.h5")
 
 print(generate_text("the", model))
