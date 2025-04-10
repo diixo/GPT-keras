@@ -1,4 +1,4 @@
-from transformers import TFGPT2LMHeadModel, GPT2Config, AutoTokenizer
+from transformers import TFGPT2LMHeadModel, GPT2Config, GPT2TokenizerFast
 import tensorflow as tf
 from pathlib import Path
 import re
@@ -11,19 +11,19 @@ def str_tokenize_words(s: str, stopwords=set()):
 
 # ---------- hyperparams --------------------------------------------
 batch_size = 32
-seq_length = 64
-embedding_dim = 256
-dff = 256
-num_heads = 4
+seq_length = 24
+embedding_dim = 384
+dff = 384
+num_heads = 12
 num_layers = 4
 # -------------------------------------------------------------------
 
 learning_rate = 5e-4
-epochs = 3
+epochs = 10
 
 #####################################################################
 
-model_path = f"romeo-MiniLM-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
+model_path = f"romeo-gpt2-{embedding_dim}-{batch_size}-{seq_length}-{dff}-{num_heads}.h5"
 
 with open("input.txt", "r", encoding="utf-8") as file:
     lines = file.read().split("\n")
@@ -35,7 +35,7 @@ print(f"Lines: {len(lines)}, Batches per epoch: {batches_per_epoch}")
 
 #####################################################################
 
-tokenizer = AutoTokenizer.from_pretrained("all-MiniLM-L6-v2")
+tokenizer = GPT2TokenizerFast.from_pretrained("tokenizer-gpt")
 
 print(f"model.config: vocab.sz={tokenizer.vocab_size},",
     f"pad_token_id={tokenizer.pad_token_id},",
@@ -43,19 +43,21 @@ print(f"model.config: vocab.sz={tokenizer.vocab_size},",
     f"eos_token_id={tokenizer.eos_token_id};",
     )
 
-tokens = tokenizer(lines, add_special_tokens=True, padding="max_length", truncation=True, max_length=seq_length, return_tensors="np")
+tokens = tokenizer(lines, add_special_tokens=True, padding=True, truncation=True, max_length=seq_length, return_tensors="np")
 
 input_ids = tokens["input_ids"]
 attention_masks = tokens["attention_mask"]
 
 
+#tokenizer.pad_token = tokenizer.eos_token
+
 config = GPT2Config(
     vocab_size=tokenizer.vocab_size, 
-    n_positions=seq_length,
+    n_positions=seq_length + 1,
     n_embd=embedding_dim, 
     n_layer=num_layers, 
     n_head=num_heads, 
-    n_inner=dff
+    n_inner=dff,
 
     bos_token_id=tokenizer.bos_token_id,
     eos_token_id=tokenizer.eos_token_id,
@@ -99,34 +101,30 @@ else:
 # -------------------------------------------------------------------
 model.summary()
 
-def generate_text(model, start_string, length=50):
+
+def generate_text(model: TFGPT2LMHeadModel, tokenizer: GPT2TokenizerFast, start_string, length=seq_length):
+
     input_ids = tokenizer(start_string, return_tensors="tf")["input_ids"]
     generated_ids = []
 
-    for _ in range(length):
+    sz = length - input_ids.shape[-1]
+
+    for _ in range(sz):
         predictions = model(input_ids).logits
         predictions = predictions[:, -1, :]
         categoricals = tf.random.categorical(predictions, num_samples=1).numpy()
         predicted_id = categoricals[-1, 0]
 
         input_ids = tf.concat([input_ids, [[predicted_id]]], axis=-1)
+
         input_ids = input_ids[:, -config.n_positions:]
 
         generated_ids.append(predicted_id)
+    print(input_ids[0])
 
-    tokens = tokenizer.convert_ids_to_tokens(generated_ids)
-
-    #print(tokenizer.decode(generated_ids, skip_special_tokens=True))
-
-    # Insert spaces
-    text = start_string
-    for token in tokens:
-        if token.startswith("##"):
-            text += token[2:]
-        else:
-            text += " " + token
-    return text.strip()
+    return tokenizer.decode(input_ids[0].numpy(), skip_special_tokens=True)
 
 
-generated = generate_text(model, "ROMEO: ")
+generated = generate_text(model, tokenizer, "ROMEO: ")
 print(generated)
+print("*" * 80)
